@@ -49,4 +49,54 @@ describe("ompModelRoles", () => {
 		const { store } = fakeConfig({}, { plan: "p/only-here" });
 		expect(await store.write("/w", "plan", "a/big")).toContain("in this project plan is p/only-here");
 	});
+
+	test("caches reads per cwd within TTL, deduplicates concurrent reads, and invalidates on write", async () => {
+		let clock = 1_000;
+		const global: Record<string, string> = { default: "a/big", smol: "a/small" };
+		const calls: string[][] = [];
+		const gate = Promise.withResolvers<void>();
+		let gated = true;
+		const run = async (args: string[]): Promise<unknown> => {
+			calls.push(args);
+			if (gated) await gate.promise;
+			if (args[0] === "get" && args[1] === "modelRoles") return { key: "modelRoles", value: { ...global } };
+			if (args[0] === "get" && args[1] === "cycleOrder")
+				return { key: "cycleOrder", value: ["smol", "default"] };
+			if (args[0] === "list") return { modelRoles: { value: { ...global } } };
+			if (args[0] === "set") {
+				for (const key of Object.keys(global)) delete global[key];
+				Object.assign(global, JSON.parse(args[2]!));
+				return { key: "modelRoles", value: global };
+			}
+			throw new Error(`unexpected ${args.join(" ")}`);
+		};
+		const store = ompModelRoles(run, { ttlMs: 10_000, now: () => clock });
+
+		// Concurrent reads for the same cwd share a single pair of `omp config get` calls.
+		const p1 = store.read("/w");
+		const p2 = store.read("/w");
+		gate.resolve();
+		gated = false;
+		const [r1, r2] = await Promise.all([p1, p2]);
+		expect(r1).toEqual(r2);
+		expect(calls.filter(c => c[0] === "get")).toHaveLength(2);
+
+		// Subsequent read within TTL hits the cache without spawning `omp config`.
+		clock += 5_000;
+		const r3 = await store.read("/w");
+		expect(r3).toEqual(r1);
+		expect(calls.filter(c => c[0] === "get")).toHaveLength(2);
+
+		// Writing invalidates the cache immediately.
+		await store.write("/w", "smol", "a/tiny");
+		const getsAfterWrite = calls.filter(c => c[0] === "get").length;
+		const r4 = await store.read("/w");
+		expect(r4.roles.find(r => r.id === "smol")?.selector).toBe("a/tiny");
+		expect(calls.filter(c => c[0] === "get").length).toBe(getsAfterWrite + 2);
+
+		// After TTL expires, read refreshes again.
+		clock += 10_000;
+		await store.read("/w");
+		expect(calls.filter(c => c[0] === "get").length).toBe(getsAfterWrite + 4);
+	});
 });

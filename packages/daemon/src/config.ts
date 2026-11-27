@@ -54,7 +54,7 @@ export interface FileConfig {
 		authMethod?: string;
 		/** Default ACP execution mode id (`default`, `accept-edits`, `auto`, `plan`, …). */
 		mode?: string;
-		/** Default client-side permission approval policy (`ask`, `edits`, `auto`; default `ask`). */
+		/** Default client-side permission approval policy (`ask`, `edits`, `auto`; default `auto`). */
 		permissionMode?: PermissionMode;
 	};
 	gateway?: {

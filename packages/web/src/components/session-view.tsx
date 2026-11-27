@@ -7,7 +7,6 @@ import {
 	type HandoffWire,
 	type ImageWire,
 	type MachineSummary,
-	type ModelRolesWire,
 	type PermissionMode,
 	type SessionBackend,
 	type SessionOptions,
@@ -25,7 +24,7 @@ import {
 import { createPortal } from "react-dom";
 import { ackedSessionId } from "../lib/ack";
 import { stripAnsi } from "../lib/ansi";
-import { type Selection, withWorktree } from "../lib/environment";
+import { basename, findProject, type Selection, withWorktree } from "../lib/environment";
 import { appendDraft } from "../lib/attention";
 import { presentEntries } from "../lib/custom-messages";
 import type { DraftAttachments } from "../lib/draft-attachments";
@@ -34,6 +33,7 @@ import { editKey, editedLines, rootsOfMachine } from "../lib/files-links";
 import { type AgentCounts, countRunningAgents } from "../lib/subagents";
 import { switchAvailability, visibleHandoff } from "../lib/handoff";
 import { loadPermissionModePreference, savePermissionModePreference } from "../lib/new-session";
+import { useModelRoles } from "../lib/use-model-roles";
 import { useOmpTheme } from "../lib/use-omp-theme";
 import { useReadReport } from "../lib/use-read-report";
 import { goalCommand, lastAssistantText, parseWebCommand, withWebCommands } from "../lib/web-commands";
@@ -175,7 +175,14 @@ export function SessionView({
 	const agentsWatched = !readOnly && caps.subagents;
 	const [modelsOpen, setModelsOpen] = useState(false);
 	const [contextAnchor, setContextAnchor] = useState<HTMLButtonElement | null>(null);
-	const [roles, setRoles] = useState<ModelRolesWire | null>(null);
+	// The roles behind the status line's toggles (seeded from cache across session switches; refreshed on hub close).
+	const { roles, reload: loadRoles } = useModelRoles(
+		client,
+		machine,
+		sessionId,
+		status?.cwd ?? info?.cwd,
+		!readOnly && caps.roles,
+	);
 	// The machine's omp theme colours, for the status line and the hub (kept when the machine goes offline).
 	const themeVars = useOmpTheme(client, machine, offline);
 	const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
@@ -207,8 +214,9 @@ export function SessionView({
 		}),
 		[machine, toolPaths, client, sessionId],
 	);
+	const shownEntries = useMemo(() => presentEntries(view.entries), [view.entries]);
 	useToolPathLinks(transcriptRef, toolLinks);
-	useTranscriptTimes(transcriptRef);
+	useTranscriptTimes(transcriptRef, shownEntries);
 	const tail = useTranscriptTail(transcriptRef, view.entries.length + (view.stream ? 1 : 0));
 
 	// An extension's title replaces the tab title while this session is shown.
@@ -251,7 +259,6 @@ export function SessionView({
 	// omp builtins that need its terminal UI (RPC mode refuses them) run here instead: `/new` and `/fork` open another
 	// session, as the terminal does; a session command of the same name (an extension's) still goes to omp.
 	const commands = useMemo(() => withWebCommands(view.commands, caps), [view.commands, caps]);
-	const shownEntries = useMemo(() => presentEntries(view.entries), [view.entries]);
 	const local = useCallback(
 		(deliver: (message: string, images?: ImageWire[]) => Promise<Ack>) =>
 			async (message: string, images?: ImageWire[]): Promise<Ack> => {
@@ -330,20 +337,19 @@ export function SessionView({
 			onShowList,
 		],
 	);
-	// The roles behind the status line's toggles; read again when the hub (which can change them) closes.
-	const loadRoles = useCallback((): void => {
-		void client.request(machine, { t: "session.roles", sessionId }).then(ack => {
-			if (ack.ok) setRoles(ack.data as ModelRolesWire);
-		});
-	}, [client, machine, sessionId]);
 	const hosted = !readOnly && !loading;
 	// Until its first message a session can still move to another project or worktree (as a new session there: omp's
 	// directory is fixed for a process). The status line offers it in place of the directory.
 	const fresh = hosted && !view.working && !view.entries.some(e => e.type === "message");
 	const here: Selection = { machine, project: info?.projectRoot ?? "", worktree: info?.worktreeRoot ?? "" };
 	const [moveError, setMoveError] = useState<string | null>(null);
-	// The omp ⇄ agy toggle's pending move (starting the other agent takes seconds), by the move generation that started it.
-	const [switching, setSwitching] = useState<{ generation: number; to: SessionBackend } | null>(null);
+	// Pending relocation of a fresh session (starting a new agent process takes seconds), by the move generation that started it.
+	const [switching, setSwitching] = useState<
+		| { generation: number; kind: "backend"; to: SessionBackend }
+		| { generation: number; kind: "project"; name: string }
+		| { generation: number; kind: "worktree"; name: string }
+		| null
+	>(null);
 	// Failures of the status line's goal and loop actions (the composer shows those of `/goal` and `/loop`).
 	const [modeError, setModeError] = useState<string | null>(null);
 	const modeAction = (message: ClientRequest): void => {
@@ -361,7 +367,18 @@ export function SessionView({
 		const sameBackend = nextBackend === backend;
 		if (!fresh || !target.machine || target.worktree === "" || (samePlace && sameBackend)) return;
 		setMoveError(null);
-		if (!sameBackend) setSwitching({ generation, to: nextBackend });
+		if (!sameBackend) {
+			setSwitching({ generation, kind: "backend", to: nextBackend });
+		} else if (target.machine !== machine || target.project !== here.project) {
+			const name =
+				(target.machine === machine ? findProject(machineInfo, target.project)?.name : undefined) ??
+				basename(target.project || target.worktree);
+			setSwitching({ generation, kind: "project", name });
+		} else {
+			const wt = findProject(machineInfo, target.project)?.worktrees.find(w => w.path === target.worktree);
+			const name = wt ? (wt.branch ?? `${basename(wt.path)} (detached)`) : basename(target.worktree);
+			setSwitching({ generation, kind: "worktree", name });
+		}
 		const model =
 			sameBackend && status?.model
 				? status.thinkingLevel
@@ -402,6 +419,7 @@ export function SessionView({
 	// selection with nowhere to move) drops any move still running.
 	useEffect(() => {
 		moveGeneration.current++;
+		setSwitching(null);
 		if (!relocationTarget) return;
 		const timer = setTimeout(() => followSidebar(relocationTarget), SIDEBAR_SETTLE_MS);
 		return () => clearTimeout(timer);
@@ -412,10 +430,6 @@ export function SessionView({
 		},
 		[],
 	);
-	useEffect(() => {
-		if (hosted && caps.roles) loadRoles();
-		else setRoles(null);
-	}, [hosted, caps.roles, loadRoles]);
 	const closeModels = useCallback((): void => {
 		setModelsOpen(false);
 		loadRoles();
@@ -640,12 +654,12 @@ export function SessionView({
 										{machineInfo.antigravity?.available && (
 											<button
 												type="button"
-												className={`chip chip--button status-backend-btn${backend === "antigravity" ? " status-backend-btn--agy" : ""}${switching ? " status-backend-btn--switching" : ""}`}
+												className={`chip chip--button status-backend-btn${backend === "antigravity" ? " status-backend-btn--agy" : ""}${switching?.kind === "backend" ? " status-backend-btn--switching" : ""}`}
 												data-testid="fresh-backend-switch"
 												disabled={switching !== null}
-												aria-busy={switching !== null || undefined}
+												aria-busy={switching?.kind === "backend" || undefined}
 												title={
-													switching
+													switching?.kind === "backend"
 														? `Starting a ${switching.to === "antigravity" ? "Antigravity" : "omp"} session…`
 														: backend === "antigravity"
 															? "Switch this empty session to omp (keeps your draft)"
@@ -655,7 +669,7 @@ export function SessionView({
 													void relocate(here, backend === "antigravity" ? "omp" : "antigravity")
 												}
 											>
-												{switching ? (
+												{switching?.kind === "backend" ? (
 													<>
 														<LoaderCircle aria-hidden="true" />
 														switching to {switching.to === "antigravity" ? "agy" : "omp"}…
@@ -674,12 +688,16 @@ export function SessionView({
 											sessions={machineSessions}
 											onSelection={next => void relocate(withWorktree(machineInfo, next))}
 											placement="up"
+											switching={switching?.kind === "project" ? switching.name : null}
+											disabled={switching !== null}
 										/>
 										<WorktreePicker
 											machine={machineInfo}
 											target={here}
 											onSelection={next => void relocate(next)}
 											placement="up"
+											switching={switching?.kind === "worktree" ? switching.name : null}
+											disabled={switching !== null}
 										/>
 									</>
 								) : undefined

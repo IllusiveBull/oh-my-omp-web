@@ -53,31 +53,63 @@ async function getValue(run: RunConfig, key: string, cwd: string): Promise<unkno
 	return isRecord(result) ? result.value : undefined;
 }
 
-export function ompModelRoles(run: RunConfig): ModelRoleStore {
+const DEFAULT_ROLES_TTL_MS = 30_000;
+
+export interface OmpModelRolesOptions {
+	/** How long a `read(cwd)` result is cached before re-querying `omp config` (default 30 s). */
+	ttlMs?: number;
+	now?: () => number;
+}
+
+export function ompModelRoles(run: RunConfig, options: OmpModelRolesOptions = {}): ModelRoleStore {
+	const ttlMs = options.ttlMs ?? DEFAULT_ROLES_TTL_MS;
+	const now = options.now ?? Date.now;
+	const cache = new Map<string, { value: ModelRolesWire; expiresAt: number }>();
+	const inflight = new Map<string, Promise<ModelRolesWire>>();
+	let generation = 0;
+
+	const fetchRoles = async (cwd: string): Promise<ModelRolesWire> => {
+		const [assigned, cycle, { MODEL_ROLE_IDS, MODEL_ROLES }] = await Promise.all([
+			getValue(run, "modelRoles", cwd).then(stringRecord),
+			getValue(run, "cycleOrder", cwd),
+			// Names and sections of the built-in roles; loaded on first use only.
+			import("@oh-my-pi/pi-coding-agent/config/model-roles"),
+		]);
+		// As the hub orders them: built-in chat roles, then roles only the cycle order or an assignment names. The
+		// non-chat kinds (image, web search, speech, …) take models the session's model list does not carry.
+		const ids: string[] = MODEL_ROLE_IDS.filter(
+			id => MODEL_ROLES[id].section === "chat" && !MODEL_ROLES[id].hidden,
+		);
+		const builtIn = new Set<string>(MODEL_ROLE_IDS);
+		const extra = [...(Array.isArray(cycle) ? cycle : []), ...Object.keys(assigned)];
+		for (const id of extra) if (typeof id === "string" && !builtIn.has(id) && !ids.includes(id)) ids.push(id);
+		const names: Record<string, string> = Object.fromEntries(MODEL_ROLE_IDS.map(id => [id, MODEL_ROLES[id].name]));
+		const colors: Record<string, string> = Object.fromEntries(
+			MODEL_ROLE_IDS.flatMap(id => (MODEL_ROLES[id].color ? [[id, MODEL_ROLES[id].color]] : [])),
+		);
+		return {
+			roles: ids.map(id => ({ id, name: names[id] ?? id, color: colors[id], selector: assigned[id] })),
+			cycle: Array.isArray(cycle) ? cycle.filter((id): id is string => typeof id === "string") : [],
+		};
+	};
+
 	return {
-		async read(cwd) {
-			const [assigned, cycle, { MODEL_ROLE_IDS, MODEL_ROLES }] = await Promise.all([
-				getValue(run, "modelRoles", cwd).then(stringRecord),
-				getValue(run, "cycleOrder", cwd),
-				// Names and sections of the built-in roles; loaded on first use only.
-				import("@oh-my-pi/pi-coding-agent/config/model-roles"),
-			]);
-			// As the hub orders them: built-in chat roles, then roles only the cycle order or an assignment names. The
-			// non-chat kinds (image, web search, speech, …) take models the session's model list does not carry.
-			const ids: string[] = MODEL_ROLE_IDS.filter(
-				id => MODEL_ROLES[id].section === "chat" && !MODEL_ROLES[id].hidden,
-			);
-			const builtIn = new Set<string>(MODEL_ROLE_IDS);
-			const extra = [...(Array.isArray(cycle) ? cycle : []), ...Object.keys(assigned)];
-			for (const id of extra) if (typeof id === "string" && !builtIn.has(id) && !ids.includes(id)) ids.push(id);
-			const names: Record<string, string> = Object.fromEntries(MODEL_ROLE_IDS.map(id => [id, MODEL_ROLES[id].name]));
-			const colors: Record<string, string> = Object.fromEntries(
-				MODEL_ROLE_IDS.flatMap(id => (MODEL_ROLES[id].color ? [[id, MODEL_ROLES[id].color]] : [])),
-			);
-			return {
-				roles: ids.map(id => ({ id, name: names[id] ?? id, color: colors[id], selector: assigned[id] })),
-				cycle: Array.isArray(cycle) ? cycle.filter((id): id is string => typeof id === "string") : [],
-			};
+		read(cwd) {
+			const cached = cache.get(cwd);
+			if (cached && now() < cached.expiresAt) return Promise.resolve(cached.value);
+			const existing = inflight.get(cwd);
+			if (existing) return existing;
+			const gen = generation;
+			const pending = fetchRoles(cwd)
+				.then(value => {
+					if (generation === gen && ttlMs > 0) cache.set(cwd, { value, expiresAt: now() + ttlMs });
+					return value;
+				})
+				.finally(() => {
+					if (inflight.get(cwd) === pending) inflight.delete(cwd);
+				});
+			inflight.set(cwd, pending);
+			return pending;
 		},
 
 		async write(cwd, role, selector) {
@@ -88,6 +120,9 @@ export function ompModelRoles(run: RunConfig): ModelRoleStore {
 			if (selector === null) delete roles[role];
 			else roles[role] = selector;
 			await run(["set", "modelRoles", JSON.stringify(roles)], cwd);
+			generation++;
+			cache.clear();
+			inflight.clear();
 			const effective = stringRecord(await getValue(run, "modelRoles", cwd))[role];
 			if (effective === (selector ?? undefined)) return undefined;
 			return `Saved to the global settings, but in this project ${role} is ${effective ?? "unset"} (project settings or a --config overlay decide it).`;

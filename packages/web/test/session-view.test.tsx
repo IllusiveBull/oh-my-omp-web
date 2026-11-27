@@ -4,6 +4,7 @@ import type {
 	Ack,
 	GatewaySessionInfo,
 	MachineSummary,
+	ModelRolesWire,
 	ReplicaInfo,
 	SessionBackend,
 	SessionStatus,
@@ -471,12 +472,37 @@ describe("SessionView of a fresh session moving to another project or worktree",
 
 	test("picking another project lands on its main worktree; without a thinking level only the model is carried", async () => {
 		const { view, client, moved } = await mount({ status: status({ thinkingLevel: undefined }) });
+		const { promise, resolve: release } = Promise.withResolvers<void>();
+		client.hold = promise;
 		await view.click(".status-line .chip--button[title=Project]");
 		await view.click(".project-option[data-project='/p/solo']");
+		await view.until(() => view.query(".status-line .status-chip--switching") !== null);
+		const chip = view.query(".status-line .status-chip--switching")!;
+		expect(chip.textContent).toBe("switching to solo…");
+		expect(chip.hasAttribute("disabled")).toBe(true);
+		expect(chip.getAttribute("aria-busy")).toBe("true");
+		expect(view.query(".status-line .chip--button[title='Worktree and branch']")?.hasAttribute("disabled")).toBe(true);
+		release();
 		await view.until(() => moved.length > 0);
 		expect(client.requests[0]).toEqual({ t: "session.create", cwd: "/p/solo", model: "anthropic/claude-sonnet-4-5" });
 		expect(moved[0]!.target).toEqual({ machine: "m1", project: "/p/solo", worktree: "/p/solo" });
 		expect(moved[0]!.draft).toBe("");
+		await view.unmount();
+	});
+
+	test("picking another worktree shows switching on the worktree chip while the new session starts", async () => {
+		const { view, client, moved } = await mount({});
+		const { promise, resolve: release } = Promise.withResolvers<void>();
+		client.hold = promise;
+		await view.click(".status-line .chip--button[title='Worktree and branch']");
+		await view.click(".chip-option[data-worktree='/wt/x']");
+		await view.until(() => view.query(".status-line .status-chip--switching") !== null);
+		const chip = view.query(".status-line .status-chip--switching")!;
+		expect(chip.textContent).toBe("switching to x…");
+		expect(chip.hasAttribute("disabled")).toBe(true);
+		expect(chip.getAttribute("aria-busy")).toBe("true");
+		release();
+		await view.until(() => moved.length > 0);
 		await view.unmount();
 	});
 
@@ -581,4 +607,101 @@ describe("SessionView of a fresh session moving to another project or worktree",
 		expect(free.view.query(".status-line .chip--button[title=Project]")).toBeNull();
 		await free.view.unmount();
 	});
+});
+
+test("switching between hosted omp sessions renders the cached role menu immediately while refreshing in the background", async () => {
+	const initialRoles: ModelRolesWire = {
+		roles: [
+			{ id: "default", name: "Default", color: "success", selector: "a/big:high" },
+			{ id: "smol", name: "Fast", color: "warning", selector: "a/small" },
+			{ id: "slow", name: "Thinking", color: "accent", selector: "a/slow" },
+		],
+		cycle: ["smol", "default", "slow"],
+	};
+	const updatedRoles: ModelRolesWire = {
+		...initialRoles,
+		roles: [
+			{ id: "default", name: "Default", color: "success", selector: "a/big:high" },
+			{ id: "smol", name: "Fast", color: "warning", selector: "a/small" },
+			{ id: "slow", name: "Thinking", color: "accent", selector: "a/other" },
+		],
+	};
+	const holdB = Promise.withResolvers<Ack>();
+	class RolesSwitchClient extends DaemonClient {
+		override request(_machine: string, request: ClientRequest): Promise<Ack> {
+			if (request.t === "session.roles") {
+				if (request.sessionId === "a") return Promise.resolve({ t: "ack", reqId: "", ok: true, data: initialRoles });
+				if (request.sessionId === "b") return holdB.promise;
+			}
+			return Promise.resolve({ t: "ack", reqId: "", ok: false, error: "not in this test" });
+		}
+	}
+	const client = new RolesSwitchClient("ws://x/ws");
+	const makeStatus = (id: string, model: string, thinkingLevel?: string): SessionStatus => ({
+		sessionId: id,
+		cwd: "/p/app",
+		model,
+		thinkingLevel,
+		isStreaming: false,
+		isCompacting: false,
+		queue: { steering: [], followUp: [], liveSteered: 0 },
+		todos: [],
+	});
+	client.store("m1", "a").applySnapshot(
+		1,
+		"e",
+		emptySnapshot({
+			entries: [userEntry("e1", "hi")],
+			status: makeStatus("a", "a/big", "high"),
+			commands: [{ name: "effort", source: "builtin", subcommands: [{ name: "high" }] }],
+		}),
+	);
+	client.store("m1", "b").applySnapshot(
+		1,
+		"e",
+		emptySnapshot({
+			entries: [userEntry("e2", "hello")],
+			status: makeStatus("b", "a/small"),
+			commands: [{ name: "effort", source: "builtin", subcommands: [{ name: "high" }] }],
+		}),
+	);
+	const render = (id: string) => (
+		<SessionView
+			key={`m1/${id}`}
+			client={client}
+			machine="m1"
+			machineInfo={machineSummary({ id: "m1" })}
+			sessionId={id}
+			info={gatewaySession({ id, access: "hosted", cwd: "/p/app" })}
+			onOpen={() => {}}
+			onShowList={() => {}}
+			dockSlot={null}
+			toolbar={() => null}
+			machineSessions={[]}
+			relocationTarget={null}
+			onRelocate={() => {}}
+			handoffs={[]}
+			onSwitch={() => {}}
+			onOpenHandoff={() => {}}
+			onNewSession={async () => null}
+			onShowDock={() => {}}
+		/>
+	);
+
+	const view = await dom.mount(render("a"));
+	await view.until(() => view.query(".status-line .chip--button[title='Switch model role']") !== null);
+	expect(view.query(".status-line .chip--button[title='Switch model role']")?.textContent).toBe("default");
+
+	// Switch to session B: its `session.roles` request is still held, yet the role chip renders immediately from cache.
+	await view.rerender(render("b"));
+	const roleChip = view.query(".status-line .chip--button[title='Switch model role']");
+	expect(roleChip?.textContent).toBe("smol");
+
+	// When the background refresh finishes, the updated role list is applied.
+	holdB.resolve({ t: "ack", reqId: "", ok: true, data: updatedRoles });
+	await view.click(".status-line .chip--button[title='Switch model role']");
+	await view.until(() =>
+		view.queryAll(".status-role").some(el => el.textContent?.includes("a/other")),
+	);
+	await view.unmount();
 });
