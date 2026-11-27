@@ -1,0 +1,343 @@
+/* Terminals: tabs, the xterm pane, the key bar, the sidebar section. Raw colors live ONLY in the palette below (the 16
+ * ANSI colors, dark and light, switched like tokens.css); everything else uses the design tokens. */
+
+:root {
+	--term-ansi-0: #1c1c20;
+	--term-ansi-1: #ff6166;
+	--term-ansi-2: #3ecf8e;
+	--term-ansi-3: #f5a524;
+	--term-ansi-4: #6aa8ff;
+	--term-ansi-5: #ed4abf;
+	--term-ansi-6: #5ad8e6;
+	--term-ansi-7: #c9c9d0;
+	--term-ansi-8: #6c6c74;
+	--term-ansi-9: #ff8084;
+	--term-ansi-10: #67e0a8;
+	--term-ansi-11: #ffc04d;
+	--term-ansi-12: #8fc0ff;
+	--term-ansi-13: #f58ad6;
+	--term-ansi-14: #8be8f2;
+	--term-ansi-15: #ededef;
+}
+
+[data-theme="light"] {
+	--term-ansi-0: #151518;
+	--term-ansi-1: #c62f35;
+	--term-ansi-2: #0e8a5a;
+	--term-ansi-3: #a86500;
+	--term-ansi-4: #1f5fd1;
+	--term-ansi-5: #b02385;
+	--term-ansi-6: #13808f;
+	--term-ansi-7: #5a5a63;
+	--term-ansi-8: #8b8b94;
+	--term-ansi-9: #dc3a40;
+	--term-ansi-10: #12a36b;
+	--term-ansi-11: #c77c02;
+	--term-ansi-12: #3b7be8;
+	--term-ansi-13: #d42ea3;
+	--term-ansi-14: #1fa9bb;
+	--term-ansi-15: #2b2b30;
+}
+
+@media (prefers-color-scheme: light) {
+	:root:not([data-theme]) {
+		--term-ansi-0: #151518;
+		--term-ansi-1: #c62f35;
+		--term-ansi-2: #0e8a5a;
+		--term-ansi-3: #a86500;
+		--term-ansi-4: #1f5fd1;
+		--term-ansi-5: #b02385;
+		--term-ansi-6: #13808f;
+		--term-ansi-7: #5a5a63;
+		--term-ansi-8: #8b8b94;
+		--term-ansi-9: #dc3a40;
+		--term-ansi-10: #12a36b;
+		--term-ansi-11: #c77c02;
+		--term-ansi-12: #3b7be8;
+		--term-ansi-13: #d42ea3;
+		--term-ansi-14: #1fa9bb;
+		--term-ansi-15: #2b2b30;
+	}
+}
+
+/* -- the view ---------------------------------------------------------------------------------------------------- */
+
+.term {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-width: 0;
+	min-height: 0;
+	max-width: 100%;
+	overflow: hidden;
+}
+
+.term-tabs-wrap {
+	flex: none;
+	min-width: 0;
+}
+
+.term-tabs {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 6px 8px;
+	overflow-x: auto;
+	scrollbar-width: thin;
+	border-bottom: 1px solid var(--border);
+}
+
+/* A tab is a pill, like every other control; the open one is filled. */
+.term-tab {
+	display: flex;
+	align-items: center;
+	flex: none;
+	max-width: 220px;
+	padding-right: 2px;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	transition: background-color 120ms;
+}
+.term-tab:hover {
+	background: var(--hover);
+}
+.term-tab--on,
+.term-tab--on:hover {
+	background: var(--selected);
+	border-color: var(--border-strong);
+}
+
+.term-tab-pick {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+	padding: 4px 4px 4px 10px;
+	background: none;
+	border: 0;
+}
+.term-tab-title {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* The close and new-tab buttons are `.icon-btn`s (ui.css). */
+.term-dot {
+	flex: none;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--fg-faint);
+}
+.term-dot--running {
+	background: var(--ok);
+}
+.term-dot--exited {
+	background: var(--fg-faint);
+}
+.term-dot--lost {
+	background: var(--warn);
+}
+.term-dot--offline,
+.term-dot--disabled {
+	background: transparent;
+	border: 1px solid var(--fg-faint);
+}
+
+.term-badge {
+	flex: none;
+	margin-left: 6px;
+	padding: 0 6px;
+	font-size: var(--fs-xs);
+	line-height: 16px;
+	color: var(--accent);
+	border: 1px solid var(--accent);
+	border-radius: 999px;
+}
+
+.term-bar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex: none;
+	min-width: 0;
+	padding: 6px 12px;
+}
+.term-title {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-weight: 600;
+}
+.term-machine {
+	flex: none;
+}
+.term-tools {
+	display: flex;
+	gap: 6px;
+	margin-left: auto;
+	flex: none;
+}
+
+.term-notice,
+.term-exit,
+.term-error {
+	flex: none;
+	padding: 6px 12px;
+	font-size: var(--fs-sm);
+	color: var(--fg-muted);
+	border-top: 1px solid var(--border);
+}
+.term-notice[data-notice="disabled"],
+.term-notice[data-notice="lost"],
+.term-notice[data-notice="offline"],
+.term-notice[data-notice="error"] {
+	color: var(--warn-text);
+}
+
+.term-confirm {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	flex: none;
+	padding: 6px 12px;
+	font-size: var(--fs-sm);
+	background: var(--accent-muted);
+	border-top: 1px solid var(--border);
+}
+
+.term-body {
+	position: relative;
+	flex: 1;
+	min-width: 0;
+	min-height: 0;
+	background: var(--bg-inset);
+}
+.term-body--empty {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--fg-muted);
+}
+/* The pane is the host's own size (the fit measures it); a pty bigger than the pane scrolls, a smaller one is left/top aligned. */
+.term-host {
+	position: absolute;
+	inset: 0;
+	overflow: auto;
+}
+.term-host .xterm {
+	padding: 4px 6px;
+	width: max-content;
+	background: var(--bg-inset);
+}
+/* xterm's stylesheet paints the viewport black; it covers the padding of .xterm, which would show as a frame. */
+.term-host .xterm .xterm-viewport {
+	background-color: var(--bg-inset) !important;
+}
+
+/* -- key bar (phone) --------------------------------------------------------------------------------------------- */
+
+.term-keys {
+	position: sticky;
+	bottom: 0;
+	display: flex;
+	flex: none;
+	gap: 4px;
+	padding: 6px 8px;
+	overflow-x: auto;
+	background: var(--bg-raised);
+	border-top: 1px solid var(--border);
+}
+.term-key {
+	flex: none;
+	min-width: 40px;
+	min-height: 40px;
+	padding: 0 10px;
+	color: var(--fg);
+	background: var(--bg-overlay);
+	border: 1px solid var(--border-strong);
+	border-radius: 999px;
+	font-size: var(--fs-md);
+	cursor: pointer;
+	touch-action: manipulation;
+	user-select: none;
+	-webkit-user-select: none;
+}
+.term-key:active {
+	background: var(--selected);
+}
+.term-key--on,
+.term-key--on:active {
+	border-color: var(--accent);
+	background: var(--accent-muted);
+}
+
+/* -- the dock's terminal list --------------------------------------------------------------------------------- */
+
+.term-nav {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 8px;
+	min-height: 0;
+	overflow-y: auto;
+}
+.term-nav-list {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.term-nav-pick .term-badge {
+	margin-left: 6px;
+}
+
+/* -- narrow layout ----------------------------------------------------------------------------------------------- */
+
+/* The terminal lives in the dock panel (a `dock` size container): below 720px of dock width the bar wraps. */
+@container dock (max-width: 720px) {
+	.term-bar {
+		flex-wrap: wrap;
+	}
+	.term-machine {
+		display: none;
+	}
+}
+
+/* Phone: the soft keyboard shrinks the visual viewport (set by the view as --term-vv), not the layout one. The dock
+   itself keeps clear of the notch and the home indicator (shell.css). */
+@media (max-width: 720px) {
+	.dock .term {
+		max-height: var(--term-vv, 100dvh);
+		max-width: 100vw;
+	}
+}
+
+/* Touch: finger-sized tabs. */
+@media (pointer: coarse) {
+	.term-tab-pick,
+	.term-tab-x,
+	.term-tab-new {
+		min-height: 40px;
+	}
+	.term-tab-x,
+	.term-tab-new {
+		min-width: 40px;
+	}
+}
+
+/* -- Accounts: "Open in terminal" -------------------------------------------------------------------------------- */
+
+.acct-open-terminal {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 6px 0;
+}

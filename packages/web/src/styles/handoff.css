@@ -1,0 +1,597 @@
+/* Switching environment: the dialog (a full-screen sheet on phones), the plan, the progress of the operation, the cache
+   forecast, and the thread-level chips. Colours come from the shared tokens, so both colour schemes apply. Nothing has a
+   fixed width and long paths wrap, so a 390px viewport never scrolls sideways. */
+
+/* The switch action in the session header and the on-demand alert when it cannot switch */
+.handoff-switch {
+	flex: none;
+}
+.handoff-switch--disabled {
+	opacity: 0.55;
+}
+.handoff-switch-alert {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-top: 6px;
+	padding: 6px 10px;
+	border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent);
+	border-radius: var(--radius);
+	background: color-mix(in srgb, var(--warn) 12%, transparent);
+	color: var(--fg);
+	font-family: var(--font-ui);
+	font-size: var(--fs-sm);
+	overflow-wrap: anywhere;
+}
+
+/* Overlay + sheet */
+.handoff-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 50;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right))
+		calc(16px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+	background: var(--backdrop);
+}
+.handoff-sheet {
+	display: flex;
+	flex-direction: column;
+	width: min(720px, 100%);
+	max-height: 100%;
+	min-width: 0;
+	background: var(--panel);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-overlay);
+	overflow: hidden;
+}
+.handoff-head {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px 16px 4px;
+}
+.handoff-head h2 {
+	flex: 1;
+	min-width: 0;
+	margin: 0;
+	font-size: var(--fs-lg);
+}
+.handoff-title {
+	padding: 0 16px 8px;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+	overflow-wrap: anywhere;
+}
+.handoff-body {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 0;
+	padding: 4px 16px 16px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+.handoff-body h3,
+.handoff-body h4 {
+	margin: 0;
+	font-size: var(--fs-md);
+}
+.handoff-body p {
+	margin: 0;
+}
+.handoff-note {
+	color: var(--fg-muted);
+	font-size: var(--fs-md);
+	overflow-wrap: anywhere;
+}
+.handoff-body code {
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+	overflow-wrap: anywhere;
+}
+.handoff-section {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+/* Step 1: the machine picker */
+.handoff-machines,
+.handoff-choices {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+.handoff-machines legend,
+.handoff-choices legend {
+	padding: 0 0 6px;
+	font-size: var(--fs-md);
+	font-weight: 600;
+}
+.handoff-machine {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 8px;
+	min-height: 44px;
+	padding: 8px 12px;
+	text-align: left;
+	background: var(--bg-raised);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	color: var(--fg);
+	cursor: pointer;
+	transition:
+		background-color 120ms,
+		border-color 120ms;
+}
+.handoff-machine:hover:not(:disabled) {
+	background: var(--selected);
+}
+.handoff-machine--on,
+.handoff-machine--on:hover:not(:disabled) {
+	border-color: var(--accent);
+	background: var(--accent-muted);
+}
+.handoff-machine:disabled {
+	color: var(--fg-muted);
+	cursor: not-allowed;
+}
+.handoff-machine-name {
+	font-weight: 600;
+}
+.handoff-machine-hint {
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+
+/* The plan */
+.handoff-plan {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 0;
+}
+.handoff-blockers {
+	margin: 0;
+	padding: 10px 12px 10px 28px;
+	color: var(--err-text);
+	background: color-mix(in srgb, var(--err) 12%, transparent);
+	border: 1px solid var(--err);
+	border-radius: var(--radius);
+	overflow-wrap: anywhere;
+}
+.handoff-carried,
+.handoff-notcarried {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+	font-size: var(--fs-md);
+	overflow-wrap: anywhere;
+}
+.handoff-paths {
+	margin: 0;
+	padding-left: 18px;
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+	overflow-wrap: anywhere;
+}
+.handoff-more {
+	color: var(--fg-muted);
+	font-family: var(--font-ui);
+	list-style: none;
+	margin-left: -18px;
+}
+.handoff-choice {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	min-height: 44px;
+	padding: 8px 12px;
+	background: var(--bg-raised);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	overflow-wrap: anywhere;
+}
+.handoff-choice:not(.handoff-choice--off):hover {
+	background: var(--selected);
+}
+.handoff-choice input {
+	flex: none;
+	width: 20px;
+	height: 20px;
+	margin: 2px 0 0;
+}
+.handoff-choice--off {
+	color: var(--fg-muted);
+}
+.handoff-why {
+	color: var(--fg-muted);
+}
+.handoff-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+/* Progress */
+.handoff-progress {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 0;
+}
+.handoff-route {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 8px;
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+.handoff-route-path,
+.handoff-route-branch {
+	color: var(--fg-muted);
+	font-weight: 400;
+}
+.handoff-phase {
+	padding: 10px 12px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	overflow-wrap: anywhere;
+}
+.handoff-phase--run {
+	background: var(--ring-soft);
+}
+.handoff-phase--ok {
+	border-color: var(--ok);
+	background: color-mix(in srgb, var(--ok) 12%, transparent);
+}
+.handoff-phase--warn {
+	border-color: var(--warn);
+	background: color-mix(in srgb, var(--warn) 12%, transparent);
+}
+.handoff-phase--bad {
+	border-color: var(--err);
+	background: color-mix(in srgb, var(--err) 12%, transparent);
+}
+.handoff-leftovers,
+.handoff-warning {
+	padding: 10px 12px;
+	border: 1px solid var(--warn);
+	border-radius: var(--radius);
+	background: color-mix(in srgb, var(--warn) 12%, transparent);
+	overflow-wrap: anywhere;
+}
+.handoff-steps {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.handoff-step {
+	display: flex;
+	gap: 10px;
+	min-width: 0;
+}
+.handoff-step-icon {
+	flex: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	color: var(--fg-muted);
+}
+.handoff-step--running .handoff-step-icon {
+	color: var(--ring);
+}
+.handoff-step--running .handoff-step-icon svg {
+	animation: handoff-spin 1s linear infinite;
+}
+.handoff-step--done .handoff-step-icon {
+	color: var(--ok);
+}
+.handoff-step--failed .handoff-step-icon {
+	color: var(--err);
+}
+.handoff-step--skipped {
+	color: var(--fg-muted);
+}
+.handoff-step-body {
+	flex: 1;
+	min-width: 0;
+}
+.handoff-step-label {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 2px 8px;
+}
+.handoff-step-state {
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+.handoff-step-detail {
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+	overflow-wrap: anywhere;
+}
+.handoff-bar-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 8px;
+	margin-top: 4px;
+}
+.handoff-bar {
+	flex: 1 1 120px;
+	min-width: 0;
+	height: 8px;
+	background: var(--bg-inset);
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	overflow: hidden;
+}
+.handoff-bar-fill {
+	height: 100%;
+	background: var(--accent-gradient);
+}
+.handoff-bar-text {
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+	font-variant-numeric: tabular-nums;
+}
+@keyframes handoff-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.handoff-step--running .handoff-step-icon svg {
+		animation: none;
+	}
+}
+.handoff-details summary {
+	min-height: 32px;
+	cursor: pointer;
+}
+
+/* The cache forecast: a full hairline in the state's colour on a faint tint of it, and a leading icon; never a one-sided stripe. */
+.handoff-forecast {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	min-width: 0;
+	padding: 12px;
+	background: var(--bg-raised);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+}
+.handoff-forecast--hit {
+	border-color: color-mix(in srgb, var(--ok) 45%, transparent);
+	background: color-mix(in srgb, var(--ok) 7%, var(--bg-raised));
+}
+.handoff-forecast--partial {
+	border-color: color-mix(in srgb, var(--warn) 45%, transparent);
+	background: color-mix(in srgb, var(--warn) 7%, var(--bg-raised));
+}
+.handoff-forecast--miss {
+	border-color: color-mix(in srgb, var(--err) 45%, transparent);
+	background: color-mix(in srgb, var(--err) 7%, var(--bg-raised));
+}
+.handoff-forecast-word {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: var(--fs-sm);
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+.handoff-forecast-word svg {
+	flex: none;
+}
+.handoff-forecast--hit .handoff-forecast-word {
+	color: var(--ok-text);
+}
+.handoff-forecast--partial .handoff-forecast-word {
+	color: var(--warn-text);
+}
+.handoff-forecast--miss .handoff-forecast-word {
+	color: var(--err-text);
+}
+.handoff-forecast-head {
+	overflow-wrap: anywhere;
+}
+.handoff-items {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.handoff-item {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: 2px 8px;
+	min-width: 0;
+}
+.handoff-item-label {
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+.handoff-item-status {
+	justify-self: end;
+	padding: 0 6px;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	font-size: var(--fs-xs);
+	line-height: 18px;
+}
+.handoff-item--hit .handoff-item-status {
+	color: var(--ok-text);
+	border-color: var(--ok);
+}
+.handoff-item--miss .handoff-item-status {
+	color: var(--err-text);
+	border-color: var(--err);
+}
+.handoff-item--unknown .handoff-item-status {
+	color: var(--warn-text);
+	border-color: var(--warn);
+}
+.handoff-item-detail {
+	grid-column: 1 / -1;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+	overflow-wrap: anywhere;
+}
+.handoff-inference {
+	color: var(--warn-text);
+	font-style: italic;
+	white-space: nowrap;
+}
+.handoff-expiry {
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+	font-variant-numeric: tabular-nums;
+}
+.handoff-expiry[data-expired="true"] {
+	color: var(--err-text);
+}
+
+/* The thread-level chip */
+.handoff-chip {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 8px;
+}
+.handoff-chip-text {
+	flex: 1 1 160px;
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+.handoff-chip--bad {
+	background: color-mix(in srgb, var(--err) 14%, transparent);
+}
+.handoff-chip--warn {
+	background: color-mix(in srgb, var(--warn) 14%, transparent);
+}
+
+/* The list entry: its environment, its hops, the "switching…" badge */
+.side-env,
+.side-pick .hop-history {
+	grid-column: 2;
+	font-size: var(--fs-sm);
+	color: var(--fg-muted);
+}
+.side-env {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.hop-history {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	min-width: 0;
+}
+.hop-chip {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.hop-strip {
+	padding: 4px 16px;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+.hop-strip .hop-chip {
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+.side-switching {
+	align-self: center;
+	padding: 2px 8px;
+	margin-right: 4px;
+	color: var(--warn-text);
+	background: none;
+	border: 1px solid var(--warn);
+	border-radius: 999px;
+	font-size: var(--fs-xs);
+	white-space: nowrap;
+}
+.handoff-moved a {
+	overflow-wrap: anywhere;
+}
+
+@media (max-width: 720px) {
+	.handoff-overlay {
+		padding: 0;
+		align-items: stretch;
+		background: var(--panel);
+	}
+	.handoff-sheet {
+		width: 100%;
+		height: 100dvh;
+		padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+			env(safe-area-inset-left);
+		max-height: none;
+		border: 0;
+		border-radius: 0;
+	}
+	.handoff-head {
+		padding: 10px 12px 4px;
+	}
+	.icon-btn.handoff-close {
+		width: 44px;
+		height: 44px;
+	}
+	.handoff-body {
+		padding: 4px 12px 16px;
+	}
+	.handoff-sheet .btn,
+	.handoff-chip .btn,
+	.handoff-switch {
+		min-height: 44px;
+	}
+	.handoff-actions .btn {
+		flex: 1 1 140px;
+		justify-content: center;
+	}
+	.handoff-choice input {
+		width: 24px;
+		height: 24px;
+	}
+	.handoff-sheet input {
+		font-size: var(--fs-lg);
+	}
+	.side-switching {
+		min-height: 44px;
+		padding: 0 12px;
+	}
+	.handoff-switch-alert {
+		font-size: var(--fs-sm);
+	}
+	/* Its 44px tap target reaches into the row gaps instead of spacing the header's chip rows apart. */
+	.session-meta .handoff-switch {
+		margin-block: -6px;
+	}
+}

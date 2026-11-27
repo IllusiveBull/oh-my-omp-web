@@ -1,0 +1,16 @@
+name: Vendor tag guard
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  vendor-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify vendor gitlink
+        run: bash scripts/check-vendor-tag.sh

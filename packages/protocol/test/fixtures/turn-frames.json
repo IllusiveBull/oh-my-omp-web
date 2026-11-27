@@ -1,0 +1,1916 @@
+{
+	"headSeq": 37,
+	"events": [
+		{
+			"seq": 1,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "notice",
+					"level": "info",
+					"message": "[trimmed]",
+					"source": "xdev"
+				}
+			}
+		},
+		{
+			"seq": 2,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "agent_start"
+				}
+			}
+		},
+		{
+			"seq": 3,
+			"ev": {
+				"k": "state",
+				"status": {
+					"sessionId": "sess-1",
+					"cwd": "/work/project",
+					"thinkingLevel": "high",
+					"isStreaming": true,
+					"isCompacting": false,
+					"queue": {
+						"steering": [],
+						"followUp": [],
+						"liveSteered": 0
+					},
+					"todos": [],
+					"activeSince": 1700000000000,
+					"cost": 0
+				}
+			}
+		},
+		{
+			"seq": 4,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "turn_start"
+				}
+			}
+		},
+		{
+			"seq": 5,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_start",
+					"message": {
+						"role": "user",
+						"content": [
+							{
+								"type": "text",
+								"text": "Use the read tool to read package.json, then answer in one short sentence. Nothing else."
+							}
+						],
+						"attribution": "user",
+						"timestamp": 1794475192179
+					},
+					"messageId": "msg-1"
+				}
+			}
+		},
+		{
+			"seq": 6,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_end",
+					"message": {
+						"role": "user",
+						"content": [
+							{
+								"type": "text",
+								"text": "Use the read tool to read package.json, then answer in one short sentence. Nothing else."
+							}
+						],
+						"attribution": "user",
+						"timestamp": 1794475192179
+					},
+					"messageId": "msg-1"
+				}
+			}
+		},
+		{
+			"seq": 7,
+			"ev": {
+				"k": "entries",
+				"entries": [
+					{
+						"type": "model_change",
+						"id": "854e8da4",
+						"parentId": null,
+						"timestamp": "2026-11-12T09:19:51.988Z",
+						"runtime": {
+							"version": "18.19.0"
+						},
+						"model": "anthropic/claude-haiku-4-5",
+						"resolvedModelIsFallback": false
+					},
+					{
+						"type": "thinking_level_change",
+						"id": "a3d9856d",
+						"parentId": "854e8da4",
+						"timestamp": "2026-11-12T09:19:51.988Z",
+						"runtime": {
+							"version": "18.19.0"
+						},
+						"thinkingLevel": "high",
+						"configured": null
+					},
+					{
+						"type": "message",
+						"id": "d69596e0",
+						"parentId": "e6216db9",
+						"timestamp": "2026-11-12T09:19:53.593Z",
+						"runtime": {
+							"version": "18.19.0"
+						},
+						"message": {
+							"role": "user",
+							"content": [
+								{
+									"type": "text",
+									"text": "Use the read tool to read package.json, then answer in one short sentence. Nothing else."
+								}
+							],
+							"attribution": "user",
+							"timestamp": 1794475192179
+						}
+					}
+				]
+			}
+		},
+		{
+			"seq": 8,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_start",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The user wants me to use",
+								"thinkingSignature": ""
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 10,
+							"output": 6,
+							"cacheRead": 16417,
+							"cacheWrite": 5015,
+							"totalTokens": 21448,
+							"cost": {
+								"input": 0.000009999999999999999,
+								"output": 0.000030000000000000004,
+								"cacheRead": 0.0016417,
+								"cacheWrite": 0.010029999999999999,
+								"total": 0.011711699999999999
+							},
+							"cttl": {
+								"ephemeral1h": 5015
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475193593,
+						"responseId": "msg_fixture",
+						"credentialId": 1
+					},
+					"messageId": "msg-2"
+				}
+			}
+		},
+		{
+			"seq": 9,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_update",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The user wants me to use",
+								"thinkingSignature": ""
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 10,
+							"output": 6,
+							"cacheRead": 16417,
+							"cacheWrite": 5015,
+							"totalTokens": 21448,
+							"cost": {
+								"input": 0.000009999999999999999,
+								"output": 0.000030000000000000004,
+								"cacheRead": 0.0016417,
+								"cacheWrite": 0.010029999999999999,
+								"total": 0.011711699999999999
+							},
+							"cttl": {
+								"ephemeral1h": 5015
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475193593,
+						"responseId": "msg_fixture",
+						"credentialId": 1
+					}
+				}
+			}
+		},
+		{
+			"seq": 10,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_update",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The user wants me to use the read tool to read package.json and answer in one short sentence. Let me read",
+								"thinkingSignature": ""
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 10,
+							"output": 6,
+							"cacheRead": 16417,
+							"cacheWrite": 5015,
+							"totalTokens": 21448,
+							"cost": {
+								"input": 0.000009999999999999999,
+								"output": 0.000030000000000000004,
+								"cacheRead": 0.0016417,
+								"cacheWrite": 0.010029999999999999,
+								"total": 0.011711699999999999
+							},
+							"cttl": {
+								"ephemeral1h": 5015
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475193593,
+						"responseId": "msg_fixture",
+						"credentialId": 1
+					}
+				}
+			}
+		},
+		{
+			"seq": 11,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_update",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The user wants me to use the read tool to read package.json and answer in one short sentence. Let me read the package.json file first.",
+								"thinkingSignature": "EroDCtABCBMYAipADLig0/nZ4n2zW0FChQotWzzgYygHqDyL2eUhF8T1Oa2xq48aP36gMd3JK+01xjEsJxV3kh0AKCbL4SZLw1jG/jIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG6idbXBrABAhIM7qdwiZQ4YgCuF13OGgwDK1251gX3sPUQTaAiMJK+SY9wQEu9iXKAKKY0XQs/dc8+huWkm3UMbw2Dz5WUOTlVI4uy0kSfdOzk6xfJ7yqWAfnQEvHsUGC9P9YkN29qzA/gR5UNGYQz/rc4QJO90lLVpxqoaGUMhjz9jAIckj+duK11pPct1ndWbe4SpYEQDyjiwlToeMaJCp5cSOIKYrD5ycPOqFeJ/uFc3K+awXI1AMGlf+3nfe9CVDVXC9ELCwkoitHBcUWHfupKCNDhnyDEg+ofLuzuuwGgnTDEy4orerBe7xYxLxgB"
+							},
+							{
+								"type": "toolCall",
+								"id": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+								"name": "read",
+								"arguments": {}
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 10,
+							"output": 6,
+							"cacheRead": 16417,
+							"cacheWrite": 5015,
+							"totalTokens": 21448,
+							"cost": {
+								"input": 0.000009999999999999999,
+								"output": 0.000030000000000000004,
+								"cacheRead": 0.0016417,
+								"cacheWrite": 0.010029999999999999,
+								"total": 0.011711699999999999
+							},
+							"cttl": {
+								"ephemeral1h": 5015
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475193593,
+						"responseId": "msg_fixture",
+						"credentialId": 1,
+						"upstreamModel": "claude-haiku-4-5-20251001"
+					}
+				}
+			}
+		},
+		{
+			"seq": 12,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_update",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The user wants me to use the read tool to read package.json and answer in one short sentence. Let me read the package.json file first.",
+								"thinkingSignature": "EroDCtABCBMYAipADLig0/nZ4n2zW0FChQotWzzgYygHqDyL2eUhF8T1Oa2xq48aP36gMd3JK+01xjEsJxV3kh0AKCbL4SZLw1jG/jIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG6idbXBrABAhIM7qdwiZQ4YgCuF13OGgwDK1251gX3sPUQTaAiMJK+SY9wQEu9iXKAKKY0XQs/dc8+huWkm3UMbw2Dz5WUOTlVI4uy0kSfdOzk6xfJ7yqWAfnQEvHsUGC9P9YkN29qzA/gR5UNGYQz/rc4QJO90lLVpxqoaGUMhjz9jAIckj+duK11pPct1ndWbe4SpYEQDyjiwlToeMaJCp5cSOIKYrD5ycPOqFeJ/uFc3K+awXI1AMGlf+3nfe9CVDVXC9ELCwkoitHBcUWHfupKCNDhnyDEg+ofLuzuuwGgnTDEy4orerBe7xYxLxgB"
+							},
+							{
+								"type": "toolCall",
+								"id": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+								"name": "read",
+								"arguments": {
+									"path": "package.json"
+								}
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 10,
+							"output": 6,
+							"cacheRead": 16417,
+							"cacheWrite": 5015,
+							"totalTokens": 21448,
+							"cost": {
+								"input": 0.000009999999999999999,
+								"output": 0.000030000000000000004,
+								"cacheRead": 0.0016417,
+								"cacheWrite": 0.010029999999999999,
+								"total": 0.011711699999999999
+							},
+							"cttl": {
+								"ephemeral1h": 5015
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475193593,
+						"responseId": "msg_fixture",
+						"credentialId": 1,
+						"upstreamModel": "claude-haiku-4-5-20251001"
+					}
+				}
+			}
+		},
+		{
+			"seq": 13,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_update",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The user wants me to use the read tool to read package.json and answer in one short sentence. Let me read the package.json file first.",
+								"thinkingSignature": "EroDCtABCBMYAipADLig0/nZ4n2zW0FChQotWzzgYygHqDyL2eUhF8T1Oa2xq48aP36gMd3JK+01xjEsJxV3kh0AKCbL4SZLw1jG/jIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG6idbXBrABAhIM7qdwiZQ4YgCuF13OGgwDK1251gX3sPUQTaAiMJK+SY9wQEu9iXKAKKY0XQs/dc8+huWkm3UMbw2Dz5WUOTlVI4uy0kSfdOzk6xfJ7yqWAfnQEvHsUGC9P9YkN29qzA/gR5UNGYQz/rc4QJO90lLVpxqoaGUMhjz9jAIckj+duK11pPct1ndWbe4SpYEQDyjiwlToeMaJCp5cSOIKYrD5ycPOqFeJ/uFc3K+awXI1AMGlf+3nfe9CVDVXC9ELCwkoitHBcUWHfupKCNDhnyDEg+ofLuzuuwGgnTDEy4orerBe7xYxLxgB"
+							},
+							{
+								"type": "toolCall",
+								"id": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+								"name": "read",
+								"arguments": {
+									"path": "package.json",
+									"i": "Reading package.json"
+								}
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 10,
+							"output": 6,
+							"cacheRead": 16417,
+							"cacheWrite": 5015,
+							"totalTokens": 21448,
+							"cost": {
+								"input": 0.000009999999999999999,
+								"output": 0.000030000000000000004,
+								"cacheRead": 0.0016417,
+								"cacheWrite": 0.010029999999999999,
+								"total": 0.011711699999999999
+							},
+							"cttl": {
+								"ephemeral1h": 5015
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475193593,
+						"responseId": "msg_fixture",
+						"credentialId": 1,
+						"upstreamModel": "claude-haiku-4-5-20251001"
+					}
+				}
+			}
+		},
+		{
+			"seq": 14,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_end",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The user wants me to use the read tool to read package.json and answer in one short sentence. Let me read the package.json file first.",
+								"thinkingSignature": "EroDCtABCBMYAipADLig0/nZ4n2zW0FChQotWzzgYygHqDyL2eUhF8T1Oa2xq48aP36gMd3JK+01xjEsJxV3kh0AKCbL4SZLw1jG/jIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG6idbXBrABAhIM7qdwiZQ4YgCuF13OGgwDK1251gX3sPUQTaAiMJK+SY9wQEu9iXKAKKY0XQs/dc8+huWkm3UMbw2Dz5WUOTlVI4uy0kSfdOzk6xfJ7yqWAfnQEvHsUGC9P9YkN29qzA/gR5UNGYQz/rc4QJO90lLVpxqoaGUMhjz9jAIckj+duK11pPct1ndWbe4SpYEQDyjiwlToeMaJCp5cSOIKYrD5ycPOqFeJ/uFc3K+awXI1AMGlf+3nfe9CVDVXC9ELCwkoitHBcUWHfupKCNDhnyDEg+ofLuzuuwGgnTDEy4orerBe7xYxLxgB"
+							},
+							{
+								"type": "toolCall",
+								"id": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+								"name": "read",
+								"arguments": {
+									"path": "package.json",
+									"i": "Reading package.json"
+								},
+								"intent": "Reading package.json"
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 10,
+							"output": 113,
+							"cacheRead": 16417,
+							"cacheWrite": 5015,
+							"totalTokens": 21555,
+							"cost": {
+								"input": 0.000009999999999999999,
+								"output": 0.0005650000000000001,
+								"cacheRead": 0.0016417,
+								"cacheWrite": 0.010029999999999999,
+								"total": 0.0122467
+							},
+							"cttl": {
+								"ephemeral1h": 5015
+							}
+						},
+						"stopReason": "toolUse",
+						"timestamp": 1794475193593,
+						"responseId": "msg_fixture",
+						"credentialId": 1,
+						"upstreamModel": "claude-haiku-4-5-20251001",
+						"duration": 1488.0739999999998,
+						"ttft": 846.3209589999999,
+						"completedAt": 1794475195083
+					},
+					"messageId": "msg-2"
+				}
+			}
+		},
+		{
+			"seq": 15,
+			"ev": {
+				"k": "entries",
+				"entries": [
+					{
+						"type": "message",
+						"id": "47773c80",
+						"parentId": "569f4b68",
+						"timestamp": "2026-11-12T09:19:55.085Z",
+						"runtime": {
+							"version": "18.19.0"
+						},
+						"message": {
+							"role": "assistant",
+							"content": [
+								{
+									"type": "thinking",
+									"thinking": "The user wants me to use the read tool to read package.json and answer in one short sentence. Let me read the package.json file first.",
+									"thinkingSignature": "EroDCtABCBMYAipADLig0/nZ4n2zW0FChQotWzzgYygHqDyL2eUhF8T1Oa2xq48aP36gMd3JK+01xjEsJxV3kh0AKCbL4SZLw1jG/jIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG6idbXBrABAhIM7qdwiZQ4YgCuF13OGgwDK1251gX3sPUQTaAiMJK+SY9wQEu9iXKAKKY0XQs/dc8+huWkm3UMbw2Dz5WUOTlVI4uy0kSfdOzk6xfJ7yqWAfnQEvHsUGC9P9YkN29qzA/gR5UNGYQz/rc4QJO90lLVpxqoaGUMhjz9jAIckj+duK11pPct1ndWbe4SpYEQDyjiwlToeMaJCp5cSOIKYrD5ycPOqFeJ/uFc3K+awXI1AMGlf+3nfe9CVDVXC9ELCwkoitHBcUWHfupKCNDhnyDEg+ofLuzuuwGgnTDEy4orerBe7xYxLxgB"
+								},
+								{
+									"type": "toolCall",
+									"id": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+									"name": "read",
+									"arguments": {
+										"path": "package.json",
+										"i": "Reading package.json"
+									},
+									"intent": "Reading package.json"
+								}
+							],
+							"api": "anthropic-messages",
+							"provider": "anthropic",
+							"model": "claude-haiku-4-5",
+							"usage": {
+								"input": 10,
+								"output": 113,
+								"cacheRead": 16417,
+								"cacheWrite": 5015,
+								"totalTokens": 21555,
+								"cost": {
+									"input": 0.000009999999999999999,
+									"output": 0.0005650000000000001,
+									"cacheRead": 0.0016417,
+									"cacheWrite": 0.010029999999999999,
+									"total": 0.0122467
+								},
+								"cttl": {
+									"ephemeral1h": 5015
+								}
+							},
+							"stopReason": "toolUse",
+							"timestamp": 1794475193593,
+							"responseId": "msg_fixture",
+							"credentialId": 1,
+							"upstreamModel": "claude-haiku-4-5-20251001",
+							"duration": 1488.0739999999998,
+							"ttft": 846.3209589999999,
+							"completedAt": 1794475195083,
+							"contextSnapshot": {
+								"promptTokens": 21442,
+								"nonMessageTokens": 19774,
+								"toolSchemaTokens": 7388,
+								"compactionEpoch": 0
+							}
+						}
+					}
+				]
+			}
+		},
+		{
+			"seq": 16,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "tool_execution_start",
+					"toolCallId": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+					"toolName": "read",
+					"args": {
+						"path": "package.json"
+					},
+					"intent": "Reading package.json"
+				}
+			}
+		},
+		{
+			"seq": 17,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "tool_execution_end",
+					"toolCallId": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+					"toolName": "read",
+					"result": {
+						"content": [
+							{
+								"type": "text",
+								"text": "[package.json#87EA]\n1:{\n2:  \"name\": \"demo-app\",\n3:  \"version\": \"1.0.0\",\n4:  \"private\": true,\n5:  \"scripts\": {\n6:    \"test\": \"bun test\"\n7:  }\n8:}"
+							}
+						],
+						"details": {
+							"totalLines": 8,
+							"rowPrefixes": true,
+							"displayContent": {
+								"text": "{\n  \"name\": \"demo-app\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"bun test\"\n  }\n}",
+								"startLine": 1,
+								"lineNumbers": [
+									1,
+									2,
+									3,
+									4,
+									5,
+									6,
+									7,
+									8
+								]
+							},
+							"fileSize": 109,
+							"meta": {
+								"source": {
+									"type": "path",
+									"value": "/work/project/package.json"
+								},
+								"pagedSource": true
+							}
+						}
+					},
+					"isError": false
+				}
+			}
+		},
+		{
+			"seq": 18,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_start",
+					"message": {
+						"role": "toolResult",
+						"toolCallId": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+						"toolName": "read",
+						"content": [
+							{
+								"type": "text",
+								"text": "[package.json#87EA]\n1:{\n2:  \"name\": \"demo-app\",\n3:  \"version\": \"1.0.0\",\n4:  \"private\": true,\n5:  \"scripts\": {\n6:    \"test\": \"bun test\"\n7:  }\n8:}"
+							}
+						],
+						"details": {
+							"totalLines": 8,
+							"rowPrefixes": true,
+							"displayContent": {
+								"text": "{\n  \"name\": \"demo-app\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"bun test\"\n  }\n}",
+								"startLine": 1,
+								"lineNumbers": [
+									1,
+									2,
+									3,
+									4,
+									5,
+									6,
+									7,
+									8
+								]
+							},
+							"fileSize": 109,
+							"meta": {
+								"source": {
+									"type": "path",
+									"value": "/work/project/package.json"
+								},
+								"pagedSource": true
+							}
+						},
+						"isError": false,
+						"timestamp": 1794475195114
+					},
+					"messageId": "msg-3"
+				}
+			}
+		},
+		{
+			"seq": 19,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_end",
+					"message": {
+						"role": "toolResult",
+						"toolCallId": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+						"toolName": "read",
+						"content": [
+							{
+								"type": "text",
+								"text": "[package.json#87EA]\n1:{\n2:  \"name\": \"demo-app\",\n3:  \"version\": \"1.0.0\",\n4:  \"private\": true,\n5:  \"scripts\": {\n6:    \"test\": \"bun test\"\n7:  }\n8:}"
+							}
+						],
+						"details": {
+							"totalLines": 8,
+							"rowPrefixes": true,
+							"displayContent": {
+								"text": "{\n  \"name\": \"demo-app\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"bun test\"\n  }\n}",
+								"startLine": 1,
+								"lineNumbers": [
+									1,
+									2,
+									3,
+									4,
+									5,
+									6,
+									7,
+									8
+								]
+							},
+							"fileSize": 109,
+							"meta": {
+								"source": {
+									"type": "path",
+									"value": "/work/project/package.json"
+								},
+								"pagedSource": true
+							}
+						},
+						"isError": false,
+						"timestamp": 1794475195114
+					},
+					"messageId": "msg-3"
+				}
+			}
+		},
+		{
+			"seq": 20,
+			"ev": {
+				"k": "entries",
+				"entries": [
+					{
+						"type": "message",
+						"id": "f930ff0f",
+						"parentId": "9d6208a2",
+						"timestamp": "2026-11-12T09:19:55.114Z",
+						"runtime": {
+							"version": "18.19.0"
+						},
+						"message": {
+							"role": "toolResult",
+							"toolCallId": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+							"toolName": "read",
+							"content": [
+								{
+									"type": "text",
+									"text": "[package.json#87EA]\n1:{\n2:  \"name\": \"demo-app\",\n3:  \"version\": \"1.0.0\",\n4:  \"private\": true,\n5:  \"scripts\": {\n6:    \"test\": \"bun test\"\n7:  }\n8:}"
+								}
+							],
+							"details": {
+								"totalLines": 8,
+								"rowPrefixes": true,
+								"displayContent": {
+									"text": "{\n  \"name\": \"demo-app\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"bun test\"\n  }\n}",
+									"startLine": 1,
+									"lineNumbers": [
+										1,
+										2,
+										3,
+										4,
+										5,
+										6,
+										7,
+										8
+									]
+								},
+								"fileSize": 109,
+								"meta": {
+									"source": {
+										"type": "path",
+										"value": "/work/project/package.json"
+									},
+									"pagedSource": true
+								}
+							},
+							"isError": false,
+							"timestamp": 1794475195114
+						}
+					}
+				]
+			}
+		},
+		{
+			"seq": 21,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "turn_end",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The user wants me to use the read tool to read package.json and answer in one short sentence. Let me read the package.json file first.",
+								"thinkingSignature": "EroDCtABCBMYAipADLig0/nZ4n2zW0FChQotWzzgYygHqDyL2eUhF8T1Oa2xq48aP36gMd3JK+01xjEsJxV3kh0AKCbL4SZLw1jG/jIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG6idbXBrABAhIM7qdwiZQ4YgCuF13OGgwDK1251gX3sPUQTaAiMJK+SY9wQEu9iXKAKKY0XQs/dc8+huWkm3UMbw2Dz5WUOTlVI4uy0kSfdOzk6xfJ7yqWAfnQEvHsUGC9P9YkN29qzA/gR5UNGYQz/rc4QJO90lLVpxqoaGUMhjz9jAIckj+duK11pPct1ndWbe4SpYEQDyjiwlToeMaJCp5cSOIKYrD5ycPOqFeJ/uFc3K+awXI1AMGlf+3nfe9CVDVXC9ELCwkoitHBcUWHfupKCNDhnyDEg+ofLuzuuwGgnTDEy4orerBe7xYxLxgB"
+							},
+							{
+								"type": "toolCall",
+								"id": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+								"name": "read",
+								"arguments": {
+									"path": "package.json",
+									"i": "Reading package.json"
+								},
+								"intent": "Reading package.json"
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 10,
+							"output": 113,
+							"cacheRead": 16417,
+							"cacheWrite": 5015,
+							"totalTokens": 21555,
+							"cost": {
+								"input": 0.000009999999999999999,
+								"output": 0.0005650000000000001,
+								"cacheRead": 0.0016417,
+								"cacheWrite": 0.010029999999999999,
+								"total": 0.0122467
+							},
+							"cttl": {
+								"ephemeral1h": 5015
+							}
+						},
+						"stopReason": "toolUse",
+						"timestamp": 1794475193593,
+						"responseId": "msg_fixture",
+						"credentialId": 1,
+						"upstreamModel": "claude-haiku-4-5-20251001",
+						"duration": 1488.0739999999998,
+						"ttft": 846.3209589999999
+					},
+					"toolResults": [
+						{
+							"role": "toolResult",
+							"toolCallId": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+							"toolName": "read",
+							"content": [
+								{
+									"type": "text",
+									"text": "[package.json#87EA]\n1:{\n2:  \"name\": \"demo-app\",\n3:  \"version\": \"1.0.0\",\n4:  \"private\": true,\n5:  \"scripts\": {\n6:    \"test\": \"bun test\"\n7:  }\n8:}"
+								}
+							],
+							"details": {
+								"totalLines": 8,
+								"rowPrefixes": true,
+								"displayContent": {
+									"text": "{\n  \"name\": \"demo-app\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"bun test\"\n  }\n}",
+									"startLine": 1,
+									"lineNumbers": [
+										1,
+										2,
+										3,
+										4,
+										5,
+										6,
+										7,
+										8
+									]
+								},
+								"fileSize": 109,
+								"meta": {
+									"source": {
+										"type": "path",
+										"value": "/work/project/package.json"
+									},
+									"pagedSource": true
+								}
+							},
+							"isError": false,
+							"timestamp": 1794475195114
+						}
+					]
+				}
+			}
+		},
+		{
+			"seq": 22,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "turn_start"
+				}
+			}
+		},
+		{
+			"seq": 23,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_start",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The",
+								"thinkingSignature": ""
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 8,
+							"output": 1,
+							"cacheRead": 21432,
+							"cacheWrite": 206,
+							"totalTokens": 21647,
+							"cost": {
+								"input": 0.000008,
+								"output": 0.000005,
+								"cacheRead": 0.0021432,
+								"cacheWrite": 0.000412,
+								"total": 0.0025682
+							},
+							"cttl": {
+								"ephemeral1h": 206
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475195120,
+						"responseId": "msg_fixture",
+						"credentialId": 1
+					},
+					"messageId": "msg-4"
+				}
+			}
+		},
+		{
+			"seq": 24,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_update",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The",
+								"thinkingSignature": ""
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 8,
+							"output": 1,
+							"cacheRead": 21432,
+							"cacheWrite": 206,
+							"totalTokens": 21647,
+							"cost": {
+								"input": 0.000008,
+								"output": 0.000005,
+								"cacheRead": 0.0021432,
+								"cacheWrite": 0.000412,
+								"total": 0.0025682
+							},
+							"cttl": {
+								"ephemeral1h": 206
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475195120,
+						"responseId": "msg_fixture",
+						"credentialId": 1
+					}
+				}
+			}
+		},
+		{
+			"seq": 25,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_update",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The package.json shows a project named",
+								"thinkingSignature": ""
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 8,
+							"output": 1,
+							"cacheRead": 21432,
+							"cacheWrite": 206,
+							"totalTokens": 21647,
+							"cost": {
+								"input": 0.000008,
+								"output": 0.000005,
+								"cacheRead": 0.0021432,
+								"cacheWrite": 0.000412,
+								"total": 0.0025682
+							},
+							"cttl": {
+								"ephemeral1h": 206
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475195120,
+						"responseId": "msg_fixture",
+						"credentialId": 1
+					}
+				}
+			}
+		},
+		{
+			"seq": 26,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_update",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The package.json shows a project named \"demo-app\" version 1.0.0 ",
+								"thinkingSignature": ""
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 8,
+							"output": 1,
+							"cacheRead": 21432,
+							"cacheWrite": 206,
+							"totalTokens": 21647,
+							"cost": {
+								"input": 0.000008,
+								"output": 0.000005,
+								"cacheRead": 0.0021432,
+								"cacheWrite": 0.000412,
+								"total": 0.0025682
+							},
+							"cttl": {
+								"ephemeral1h": 206
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475195120,
+						"responseId": "msg_fixture",
+						"credentialId": 1
+					}
+				}
+			}
+		},
+		{
+			"seq": 27,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_update",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The package.json shows a project named \"demo-app\" version 1.0.0 that uses Bun as the test runner. The user wants one",
+								"thinkingSignature": ""
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 8,
+							"output": 1,
+							"cacheRead": 21432,
+							"cacheWrite": 206,
+							"totalTokens": 21647,
+							"cost": {
+								"input": 0.000008,
+								"output": 0.000005,
+								"cacheRead": 0.0021432,
+								"cacheWrite": 0.000412,
+								"total": 0.0025682
+							},
+							"cttl": {
+								"ephemeral1h": 206
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475195120,
+						"responseId": "msg_fixture",
+						"credentialId": 1
+					}
+				}
+			}
+		},
+		{
+			"seq": 28,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_update",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The package.json shows a project named \"demo-app\" version 1.0.0 that uses Bun as the test runner. The user wants one short sentence summarizing this. Let me provide",
+								"thinkingSignature": ""
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 8,
+							"output": 1,
+							"cacheRead": 21432,
+							"cacheWrite": 206,
+							"totalTokens": 21647,
+							"cost": {
+								"input": 0.000008,
+								"output": 0.000005,
+								"cacheRead": 0.0021432,
+								"cacheWrite": 0.000412,
+								"total": 0.0025682
+							},
+							"cttl": {
+								"ephemeral1h": 206
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475195120,
+						"responseId": "msg_fixture",
+						"credentialId": 1
+					}
+				}
+			}
+		},
+		{
+			"seq": 29,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_update",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The package.json shows a project named \"demo-app\" version 1.0.0 that uses Bun as the test runner. The user wants one short sentence summarizing this. Let me provide that.",
+								"thinkingSignature": "Et4DCtABCBMYAipAE8PAfnZVKjeVL3AFwIsNtCN1QU10QrJrEFnAXk2Qk9P7txJ7C53AxgzMrNLGA/NLAzlolOwA0s46l99UemM7wjIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG8idbXBrABAhIMgzJ95a2i+V9EABTtGgzUKXGg6n/vDkWUc1QiMEv2MPt18mxt60AT3bD0mG0wccbdaIRUS4k1yvwVe+STCUcG/PWgLY5nmb8bSwf4jiq6AdLoC6jQWcjDlwFJuXXekKY8cuE5OKn03iHFY7CNnxvGhart8pjOoNOBbkBoy6vdSJlL0zRfjyS+dA9pfWBTL1awKAQ5FZAIQV+HSnt5KS6VbQJF299orC6XQIhVk+WnbplfuFM+ahGHy/+7Pn46fWG66Fh9YxjyH2MXvE+7DdNybEEMIh+JRl9GAT4b+RR49JAYPHLTvnIjaDuDJDF/fIa4MewBmBsU7cELQG9uOVaABx9d3F8qh2IFiRgB"
+							},
+							{
+								"type": "text",
+								"text": "This"
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 8,
+							"output": 1,
+							"cacheRead": 21432,
+							"cacheWrite": 206,
+							"totalTokens": 21647,
+							"cost": {
+								"input": 0.000008,
+								"output": 0.000005,
+								"cacheRead": 0.0021432,
+								"cacheWrite": 0.000412,
+								"total": 0.0025682
+							},
+							"cttl": {
+								"ephemeral1h": 206
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475195120,
+						"responseId": "msg_fixture",
+						"credentialId": 1,
+						"upstreamModel": "claude-haiku-4-5-20251001"
+					}
+				}
+			}
+		},
+		{
+			"seq": 30,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_update",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The package.json shows a project named \"demo-app\" version 1.0.0 that uses Bun as the test runner. The user wants one short sentence summarizing this. Let me provide that.",
+								"thinkingSignature": "Et4DCtABCBMYAipAE8PAfnZVKjeVL3AFwIsNtCN1QU10QrJrEFnAXk2Qk9P7txJ7C53AxgzMrNLGA/NLAzlolOwA0s46l99UemM7wjIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG8idbXBrABAhIMgzJ95a2i+V9EABTtGgzUKXGg6n/vDkWUc1QiMEv2MPt18mxt60AT3bD0mG0wccbdaIRUS4k1yvwVe+STCUcG/PWgLY5nmb8bSwf4jiq6AdLoC6jQWcjDlwFJuXXekKY8cuE5OKn03iHFY7CNnxvGhart8pjOoNOBbkBoy6vdSJlL0zRfjyS+dA9pfWBTL1awKAQ5FZAIQV+HSnt5KS6VbQJF299orC6XQIhVk+WnbplfuFM+ahGHy/+7Pn46fWG66Fh9YxjyH2MXvE+7DdNybEEMIh+JRl9GAT4b+RR49JAYPHLTvnIjaDuDJDF/fIa4MewBmBsU7cELQG9uOVaABx9d3F8qh2IFiRgB"
+							},
+							{
+								"type": "text",
+								"text": "This is a private demo"
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 8,
+							"output": 1,
+							"cacheRead": 21432,
+							"cacheWrite": 206,
+							"totalTokens": 21647,
+							"cost": {
+								"input": 0.000008,
+								"output": 0.000005,
+								"cacheRead": 0.0021432,
+								"cacheWrite": 0.000412,
+								"total": 0.0025682
+							},
+							"cttl": {
+								"ephemeral1h": 206
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475195120,
+						"responseId": "msg_fixture",
+						"credentialId": 1,
+						"upstreamModel": "claude-haiku-4-5-20251001"
+					}
+				}
+			}
+		},
+		{
+			"seq": 31,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_update",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The package.json shows a project named \"demo-app\" version 1.0.0 that uses Bun as the test runner. The user wants one short sentence summarizing this. Let me provide that.",
+								"thinkingSignature": "Et4DCtABCBMYAipAE8PAfnZVKjeVL3AFwIsNtCN1QU10QrJrEFnAXk2Qk9P7txJ7C53AxgzMrNLGA/NLAzlolOwA0s46l99UemM7wjIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG8idbXBrABAhIMgzJ95a2i+V9EABTtGgzUKXGg6n/vDkWUc1QiMEv2MPt18mxt60AT3bD0mG0wccbdaIRUS4k1yvwVe+STCUcG/PWgLY5nmb8bSwf4jiq6AdLoC6jQWcjDlwFJuXXekKY8cuE5OKn03iHFY7CNnxvGhart8pjOoNOBbkBoy6vdSJlL0zRfjyS+dA9pfWBTL1awKAQ5FZAIQV+HSnt5KS6VbQJF299orC6XQIhVk+WnbplfuFM+ahGHy/+7Pn46fWG66Fh9YxjyH2MXvE+7DdNybEEMIh+JRl9GAT4b+RR49JAYPHLTvnIjaDuDJDF/fIa4MewBmBsU7cELQG9uOVaABx9d3F8qh2IFiRgB"
+							},
+							{
+								"type": "text",
+								"text": "This is a private demo app (v1.0.0) that"
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 8,
+							"output": 1,
+							"cacheRead": 21432,
+							"cacheWrite": 206,
+							"totalTokens": 21647,
+							"cost": {
+								"input": 0.000008,
+								"output": 0.000005,
+								"cacheRead": 0.0021432,
+								"cacheWrite": 0.000412,
+								"total": 0.0025682
+							},
+							"cttl": {
+								"ephemeral1h": 206
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475195120,
+						"responseId": "msg_fixture",
+						"credentialId": 1,
+						"upstreamModel": "claude-haiku-4-5-20251001"
+					}
+				}
+			}
+		},
+		{
+			"seq": 32,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_update",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The package.json shows a project named \"demo-app\" version 1.0.0 that uses Bun as the test runner. The user wants one short sentence summarizing this. Let me provide that.",
+								"thinkingSignature": "Et4DCtABCBMYAipAE8PAfnZVKjeVL3AFwIsNtCN1QU10QrJrEFnAXk2Qk9P7txJ7C53AxgzMrNLGA/NLAzlolOwA0s46l99UemM7wjIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG8idbXBrABAhIMgzJ95a2i+V9EABTtGgzUKXGg6n/vDkWUc1QiMEv2MPt18mxt60AT3bD0mG0wccbdaIRUS4k1yvwVe+STCUcG/PWgLY5nmb8bSwf4jiq6AdLoC6jQWcjDlwFJuXXekKY8cuE5OKn03iHFY7CNnxvGhart8pjOoNOBbkBoy6vdSJlL0zRfjyS+dA9pfWBTL1awKAQ5FZAIQV+HSnt5KS6VbQJF299orC6XQIhVk+WnbplfuFM+ahGHy/+7Pn46fWG66Fh9YxjyH2MXvE+7DdNybEEMIh+JRl9GAT4b+RR49JAYPHLTvnIjaDuDJDF/fIa4MewBmBsU7cELQG9uOVaABx9d3F8qh2IFiRgB"
+							},
+							{
+								"type": "text",
+								"text": "This is a private demo app (v1.0.0) that uses Bun as its test runner."
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 8,
+							"output": 1,
+							"cacheRead": 21432,
+							"cacheWrite": 206,
+							"totalTokens": 21647,
+							"cost": {
+								"input": 0.000008,
+								"output": 0.000005,
+								"cacheRead": 0.0021432,
+								"cacheWrite": 0.000412,
+								"total": 0.0025682
+							},
+							"cttl": {
+								"ephemeral1h": 206
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475195120,
+						"responseId": "msg_fixture",
+						"credentialId": 1,
+						"upstreamModel": "claude-haiku-4-5-20251001"
+					}
+				}
+			}
+		},
+		{
+			"seq": 33,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "message_end",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The package.json shows a project named \"demo-app\" version 1.0.0 that uses Bun as the test runner. The user wants one short sentence summarizing this. Let me provide that.",
+								"thinkingSignature": "Et4DCtABCBMYAipAE8PAfnZVKjeVL3AFwIsNtCN1QU10QrJrEFnAXk2Qk9P7txJ7C53AxgzMrNLGA/NLAzlolOwA0s46l99UemM7wjIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG8idbXBrABAhIMgzJ95a2i+V9EABTtGgzUKXGg6n/vDkWUc1QiMEv2MPt18mxt60AT3bD0mG0wccbdaIRUS4k1yvwVe+STCUcG/PWgLY5nmb8bSwf4jiq6AdLoC6jQWcjDlwFJuXXekKY8cuE5OKn03iHFY7CNnxvGhart8pjOoNOBbkBoy6vdSJlL0zRfjyS+dA9pfWBTL1awKAQ5FZAIQV+HSnt5KS6VbQJF299orC6XQIhVk+WnbplfuFM+ahGHy/+7Pn46fWG66Fh9YxjyH2MXvE+7DdNybEEMIh+JRl9GAT4b+RR49JAYPHLTvnIjaDuDJDF/fIa4MewBmBsU7cELQG9uOVaABx9d3F8qh2IFiRgB"
+							},
+							{
+								"type": "text",
+								"text": "This is a private demo app (v1.0.0) that uses Bun as its test runner."
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 8,
+							"output": 81,
+							"cacheRead": 21432,
+							"cacheWrite": 206,
+							"totalTokens": 21727,
+							"cost": {
+								"input": 0.000008,
+								"output": 0.00040500000000000003,
+								"cacheRead": 0.0021432,
+								"cacheWrite": 0.000412,
+								"total": 0.0029682000000000003
+							},
+							"cttl": {
+								"ephemeral1h": 206
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475195120,
+						"responseId": "msg_fixture",
+						"credentialId": 1,
+						"upstreamModel": "claude-haiku-4-5-20251001",
+						"duration": 1558.082875,
+						"ttft": 819.6832910000003,
+						"completedAt": 1794475196697
+					},
+					"messageId": "msg-4"
+				}
+			}
+		},
+		{
+			"seq": 34,
+			"ev": {
+				"k": "entries",
+				"entries": [
+					{
+						"type": "message",
+						"id": "0ef81f0b",
+						"parentId": "f930ff0f",
+						"timestamp": "2026-11-12T09:19:56.704Z",
+						"runtime": {
+							"version": "18.19.0"
+						},
+						"message": {
+							"role": "assistant",
+							"content": [
+								{
+									"type": "thinking",
+									"thinking": "The package.json shows a project named \"demo-app\" version 1.0.0 that uses Bun as the test runner. The user wants one short sentence summarizing this. Let me provide that.",
+									"thinkingSignature": "Et4DCtABCBMYAipAE8PAfnZVKjeVL3AFwIsNtCN1QU10QrJrEFnAXk2Qk9P7txJ7C53AxgzMrNLGA/NLAzlolOwA0s46l99UemM7wjIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG8idbXBrABAhIMgzJ95a2i+V9EABTtGgzUKXGg6n/vDkWUc1QiMEv2MPt18mxt60AT3bD0mG0wccbdaIRUS4k1yvwVe+STCUcG/PWgLY5nmb8bSwf4jiq6AdLoC6jQWcjDlwFJuXXekKY8cuE5OKn03iHFY7CNnxvGhart8pjOoNOBbkBoy6vdSJlL0zRfjyS+dA9pfWBTL1awKAQ5FZAIQV+HSnt5KS6VbQJF299orC6XQIhVk+WnbplfuFM+ahGHy/+7Pn46fWG66Fh9YxjyH2MXvE+7DdNybEEMIh+JRl9GAT4b+RR49JAYPHLTvnIjaDuDJDF/fIa4MewBmBsU7cELQG9uOVaABx9d3F8qh2IFiRgB"
+								},
+								{
+									"type": "text",
+									"text": "This is a private demo app (v1.0.0) that uses Bun as its test runner."
+								}
+							],
+							"api": "anthropic-messages",
+							"provider": "anthropic",
+							"model": "claude-haiku-4-5",
+							"usage": {
+								"input": 8,
+								"output": 81,
+								"cacheRead": 21432,
+								"cacheWrite": 206,
+								"totalTokens": 21727,
+								"cost": {
+									"input": 0.000008,
+									"output": 0.00040500000000000003,
+									"cacheRead": 0.0021432,
+									"cacheWrite": 0.000412,
+									"total": 0.0029682000000000003
+								},
+								"cttl": {
+									"ephemeral1h": 206
+								}
+							},
+							"stopReason": "stop",
+							"timestamp": 1794475195120,
+							"responseId": "msg_fixture",
+							"credentialId": 1,
+							"upstreamModel": "claude-haiku-4-5-20251001",
+							"duration": 1558.082875,
+							"ttft": 819.6832910000003,
+							"completedAt": 1794475196697,
+							"contextSnapshot": {
+								"promptTokens": 21646,
+								"nonMessageTokens": 19774,
+								"toolSchemaTokens": 7388,
+								"compactionEpoch": 0
+							},
+							"errorId": 0
+						}
+					}
+				]
+			}
+		},
+		{
+			"seq": 35,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "turn_end",
+					"message": {
+						"role": "assistant",
+						"content": [
+							{
+								"type": "thinking",
+								"thinking": "The package.json shows a project named \"demo-app\" version 1.0.0 that uses Bun as the test runner. The user wants one short sentence summarizing this. Let me provide that.",
+								"thinkingSignature": "Et4DCtABCBMYAipAE8PAfnZVKjeVL3AFwIsNtCN1QU10QrJrEFnAXk2Qk9P7txJ7C53AxgzMrNLGA/NLAzlolOwA0s46l99UemM7wjIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG8idbXBrABAhIMgzJ95a2i+V9EABTtGgzUKXGg6n/vDkWUc1QiMEv2MPt18mxt60AT3bD0mG0wccbdaIRUS4k1yvwVe+STCUcG/PWgLY5nmb8bSwf4jiq6AdLoC6jQWcjDlwFJuXXekKY8cuE5OKn03iHFY7CNnxvGhart8pjOoNOBbkBoy6vdSJlL0zRfjyS+dA9pfWBTL1awKAQ5FZAIQV+HSnt5KS6VbQJF299orC6XQIhVk+WnbplfuFM+ahGHy/+7Pn46fWG66Fh9YxjyH2MXvE+7DdNybEEMIh+JRl9GAT4b+RR49JAYPHLTvnIjaDuDJDF/fIa4MewBmBsU7cELQG9uOVaABx9d3F8qh2IFiRgB"
+							},
+							{
+								"type": "text",
+								"text": "This is a private demo app (v1.0.0) that uses Bun as its test runner."
+							}
+						],
+						"api": "anthropic-messages",
+						"provider": "anthropic",
+						"model": "claude-haiku-4-5",
+						"usage": {
+							"input": 8,
+							"output": 81,
+							"cacheRead": 21432,
+							"cacheWrite": 206,
+							"totalTokens": 21727,
+							"cost": {
+								"input": 0.000008,
+								"output": 0.00040500000000000003,
+								"cacheRead": 0.0021432,
+								"cacheWrite": 0.000412,
+								"total": 0.0029682000000000003
+							},
+							"cttl": {
+								"ephemeral1h": 206
+							}
+						},
+						"stopReason": "stop",
+						"timestamp": 1794475195120,
+						"responseId": "msg_fixture",
+						"credentialId": 1,
+						"upstreamModel": "claude-haiku-4-5-20251001",
+						"duration": 1558.082875,
+						"ttft": 819.6832910000003
+					},
+					"toolResults": []
+				}
+			}
+		},
+		{
+			"seq": 36,
+			"ev": {
+				"k": "agent",
+				"event": {
+					"type": "agent_end",
+					"messages": [
+						{
+							"role": "user",
+							"content": [
+								{
+									"type": "text",
+									"text": "Use the read tool to read package.json, then answer in one short sentence. Nothing else."
+								}
+							],
+							"attribution": "user",
+							"timestamp": 1794475192179
+						},
+						{
+							"role": "assistant",
+							"content": [
+								{
+									"type": "thinking",
+									"thinking": "The user wants me to use the read tool to read package.json and answer in one short sentence. Let me read the package.json file first.",
+									"thinkingSignature": "EroDCtABCBMYAipADLig0/nZ4n2zW0FChQotWzzgYygHqDyL2eUhF8T1Oa2xq48aP36gMd3JK+01xjEsJxV3kh0AKCbL4SZLw1jG/jIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG6idbXBrABAhIM7qdwiZQ4YgCuF13OGgwDK1251gX3sPUQTaAiMJK+SY9wQEu9iXKAKKY0XQs/dc8+huWkm3UMbw2Dz5WUOTlVI4uy0kSfdOzk6xfJ7yqWAfnQEvHsUGC9P9YkN29qzA/gR5UNGYQz/rc4QJO90lLVpxqoaGUMhjz9jAIckj+duK11pPct1ndWbe4SpYEQDyjiwlToeMaJCp5cSOIKYrD5ycPOqFeJ/uFc3K+awXI1AMGlf+3nfe9CVDVXC9ELCwkoitHBcUWHfupKCNDhnyDEg+ofLuzuuwGgnTDEy4orerBe7xYxLxgB"
+								},
+								{
+									"type": "toolCall",
+									"id": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+									"name": "read",
+									"arguments": {
+										"path": "package.json",
+										"i": "Reading package.json"
+									},
+									"intent": "Reading package.json"
+								}
+							],
+							"api": "anthropic-messages",
+							"provider": "anthropic",
+							"model": "claude-haiku-4-5",
+							"usage": {
+								"input": 10,
+								"output": 113,
+								"cacheRead": 16417,
+								"cacheWrite": 5015,
+								"totalTokens": 21555,
+								"cost": {
+									"input": 0.000009999999999999999,
+									"output": 0.0005650000000000001,
+									"cacheRead": 0.0016417,
+									"cacheWrite": 0.010029999999999999,
+									"total": 0.0122467
+								},
+								"cttl": {
+									"ephemeral1h": 5015
+								}
+							},
+							"stopReason": "toolUse",
+							"timestamp": 1794475193593,
+							"responseId": "msg_fixture",
+							"credentialId": 1,
+							"upstreamModel": "claude-haiku-4-5-20251001",
+							"duration": 1488.0739999999998,
+							"ttft": 846.3209589999999
+						},
+						{
+							"role": "toolResult",
+							"toolCallId": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+							"toolName": "read",
+							"content": [
+								{
+									"type": "text",
+									"text": "[package.json#87EA]\n1:{\n2:  \"name\": \"demo-app\",\n3:  \"version\": \"1.0.0\",\n4:  \"private\": true,\n5:  \"scripts\": {\n6:    \"test\": \"bun test\"\n7:  }\n8:}"
+								}
+							],
+							"details": {
+								"totalLines": 8,
+								"rowPrefixes": true,
+								"displayContent": {
+									"text": "{\n  \"name\": \"demo-app\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"bun test\"\n  }\n}",
+									"startLine": 1,
+									"lineNumbers": [
+										1,
+										2,
+										3,
+										4,
+										5,
+										6,
+										7,
+										8
+									]
+								},
+								"fileSize": 109,
+								"meta": {
+									"source": {
+										"type": "path",
+										"value": "/work/project/package.json"
+									},
+									"pagedSource": true
+								}
+							},
+							"isError": false,
+							"timestamp": 1794475195114
+						},
+						{
+							"role": "assistant",
+							"content": [
+								{
+									"type": "thinking",
+									"thinking": "The package.json shows a project named \"demo-app\" version 1.0.0 that uses Bun as the test runner. The user wants one short sentence summarizing this. Let me provide that.",
+									"thinkingSignature": "Et4DCtABCBMYAipAE8PAfnZVKjeVL3AFwIsNtCN1QU10QrJrEFnAXk2Qk9P7txJ7C53AxgzMrNLGA/NLAzlolOwA0s46l99UemM7wjIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG8idbXBrABAhIMgzJ95a2i+V9EABTtGgzUKXGg6n/vDkWUc1QiMEv2MPt18mxt60AT3bD0mG0wccbdaIRUS4k1yvwVe+STCUcG/PWgLY5nmb8bSwf4jiq6AdLoC6jQWcjDlwFJuXXekKY8cuE5OKn03iHFY7CNnxvGhart8pjOoNOBbkBoy6vdSJlL0zRfjyS+dA9pfWBTL1awKAQ5FZAIQV+HSnt5KS6VbQJF299orC6XQIhVk+WnbplfuFM+ahGHy/+7Pn46fWG66Fh9YxjyH2MXvE+7DdNybEEMIh+JRl9GAT4b+RR49JAYPHLTvnIjaDuDJDF/fIa4MewBmBsU7cELQG9uOVaABx9d3F8qh2IFiRgB"
+								},
+								{
+									"type": "text",
+									"text": "This is a private demo app (v1.0.0) that uses Bun as its test runner."
+								}
+							],
+							"api": "anthropic-messages",
+							"provider": "anthropic",
+							"model": "claude-haiku-4-5",
+							"usage": {
+								"input": 8,
+								"output": 81,
+								"cacheRead": 21432,
+								"cacheWrite": 206,
+								"totalTokens": 21727,
+								"cost": {
+									"input": 0.000008,
+									"output": 0.00040500000000000003,
+									"cacheRead": 0.0021432,
+									"cacheWrite": 0.000412,
+									"total": 0.0029682000000000003
+								},
+								"cttl": {
+									"ephemeral1h": 206
+								}
+							},
+							"stopReason": "stop",
+							"timestamp": 1794475195120,
+							"responseId": "msg_fixture",
+							"credentialId": 1,
+							"upstreamModel": "claude-haiku-4-5-20251001",
+							"duration": 1558.082875,
+							"ttft": 819.6832910000003
+						}
+					],
+					"isTerminal": true,
+					"yielded": true
+				}
+			}
+		},
+		{
+			"seq": 37,
+			"ev": {
+				"k": "state",
+				"status": {
+					"sessionId": "sess-1",
+					"cwd": "/work/project",
+					"thinkingLevel": "high",
+					"isStreaming": false,
+					"isCompacting": false,
+					"queue": {
+						"steering": [],
+						"followUp": [],
+						"liveSteered": 0
+					},
+					"todos": [],
+					"cost": 0.0152149
+				}
+			}
+		}
+	],
+	"snapshot": {
+		"entries": [
+			{
+				"type": "model_change",
+				"id": "854e8da4",
+				"parentId": null,
+				"timestamp": "2026-11-12T09:19:51.988Z",
+				"runtime": {
+					"version": "18.19.0"
+				},
+				"model": "anthropic/claude-haiku-4-5",
+				"resolvedModelIsFallback": false
+			},
+			{
+				"type": "thinking_level_change",
+				"id": "a3d9856d",
+				"parentId": "854e8da4",
+				"timestamp": "2026-11-12T09:19:51.988Z",
+				"runtime": {
+					"version": "18.19.0"
+				},
+				"thinkingLevel": "high",
+				"configured": null
+			},
+			{
+				"type": "message",
+				"id": "d69596e0",
+				"parentId": "e6216db9",
+				"timestamp": "2026-11-12T09:19:53.593Z",
+				"runtime": {
+					"version": "18.19.0"
+				},
+				"message": {
+					"role": "user",
+					"content": [
+						{
+							"type": "text",
+							"text": "Use the read tool to read package.json, then answer in one short sentence. Nothing else."
+						}
+					],
+					"attribution": "user",
+					"timestamp": 1794475192179
+				}
+			},
+			{
+				"type": "message",
+				"id": "47773c80",
+				"parentId": "569f4b68",
+				"timestamp": "2026-11-12T09:19:55.085Z",
+				"runtime": {
+					"version": "18.19.0"
+				},
+				"message": {
+					"role": "assistant",
+					"content": [
+						{
+							"type": "thinking",
+							"thinking": "The user wants me to use the read tool to read package.json and answer in one short sentence. Let me read the package.json file first.",
+							"thinkingSignature": "EroDCtABCBMYAipADLig0/nZ4n2zW0FChQotWzzgYygHqDyL2eUhF8T1Oa2xq48aP36gMd3JK+01xjEsJxV3kh0AKCbL4SZLw1jG/jIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG6idbXBrABAhIM7qdwiZQ4YgCuF13OGgwDK1251gX3sPUQTaAiMJK+SY9wQEu9iXKAKKY0XQs/dc8+huWkm3UMbw2Dz5WUOTlVI4uy0kSfdOzk6xfJ7yqWAfnQEvHsUGC9P9YkN29qzA/gR5UNGYQz/rc4QJO90lLVpxqoaGUMhjz9jAIckj+duK11pPct1ndWbe4SpYEQDyjiwlToeMaJCp5cSOIKYrD5ycPOqFeJ/uFc3K+awXI1AMGlf+3nfe9CVDVXC9ELCwkoitHBcUWHfupKCNDhnyDEg+ofLuzuuwGgnTDEy4orerBe7xYxLxgB"
+						},
+						{
+							"type": "toolCall",
+							"id": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+							"name": "read",
+							"arguments": {
+								"path": "package.json",
+								"i": "Reading package.json"
+							},
+							"intent": "Reading package.json"
+						}
+					],
+					"api": "anthropic-messages",
+					"provider": "anthropic",
+					"model": "claude-haiku-4-5",
+					"usage": {
+						"input": 10,
+						"output": 113,
+						"cacheRead": 16417,
+						"cacheWrite": 5015,
+						"totalTokens": 21555,
+						"cost": {
+							"input": 0.000009999999999999999,
+							"output": 0.0005650000000000001,
+							"cacheRead": 0.0016417,
+							"cacheWrite": 0.010029999999999999,
+							"total": 0.0122467
+						},
+						"cttl": {
+							"ephemeral1h": 5015
+						}
+					},
+					"stopReason": "toolUse",
+					"timestamp": 1794475193593,
+					"responseId": "msg_fixture",
+					"credentialId": 1,
+					"upstreamModel": "claude-haiku-4-5-20251001",
+					"duration": 1488.0739999999998,
+					"ttft": 846.3209589999999,
+					"completedAt": 1794475195083,
+					"contextSnapshot": {
+						"promptTokens": 21442,
+						"nonMessageTokens": 19774,
+						"toolSchemaTokens": 7388,
+						"compactionEpoch": 0
+					}
+				}
+			},
+			{
+				"type": "message",
+				"id": "f930ff0f",
+				"parentId": "9d6208a2",
+				"timestamp": "2026-11-12T09:19:55.114Z",
+				"runtime": {
+					"version": "18.19.0"
+				},
+				"message": {
+					"role": "toolResult",
+					"toolCallId": "toolu_01K7h7wuNw3jvPe3nusMziW2",
+					"toolName": "read",
+					"content": [
+						{
+							"type": "text",
+							"text": "[package.json#87EA]\n1:{\n2:  \"name\": \"demo-app\",\n3:  \"version\": \"1.0.0\",\n4:  \"private\": true,\n5:  \"scripts\": {\n6:    \"test\": \"bun test\"\n7:  }\n8:}"
+						}
+					],
+					"details": {
+						"totalLines": 8,
+						"rowPrefixes": true,
+						"displayContent": {
+							"text": "{\n  \"name\": \"demo-app\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"bun test\"\n  }\n}",
+							"startLine": 1,
+							"lineNumbers": [
+								1,
+								2,
+								3,
+								4,
+								5,
+								6,
+								7,
+								8
+							]
+						},
+						"fileSize": 109,
+						"meta": {
+							"source": {
+								"type": "path",
+								"value": "/work/project/package.json"
+							},
+							"pagedSource": true
+						}
+					},
+					"isError": false,
+					"timestamp": 1794475195114
+				}
+			},
+			{
+				"type": "message",
+				"id": "0ef81f0b",
+				"parentId": "f930ff0f",
+				"timestamp": "2026-11-12T09:19:56.704Z",
+				"runtime": {
+					"version": "18.19.0"
+				},
+				"message": {
+					"role": "assistant",
+					"content": [
+						{
+							"type": "thinking",
+							"thinking": "The package.json shows a project named \"demo-app\" version 1.0.0 that uses Bun as the test runner. The user wants one short sentence summarizing this. Let me provide that.",
+							"thinkingSignature": "Et4DCtABCBMYAipAE8PAfnZVKjeVL3AFwIsNtCN1QU10QrJrEFnAXk2Qk9P7txJ7C53AxgzMrNLGA/NLAzlolOwA0s46l99UemM7wjIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okZDdlYzg0NWYtMGFmOC00MmJkLWJmZTgtMDYyMzIyNjM4YjE3chBBEU+gJmSSBUu1w9fH5W07iAEBmgEbChljbGF1ZGUtaGFpa3UtNC01LTIwMjUxMDAxqAG8idbXBrABAhIMgzJ95a2i+V9EABTtGgzUKXGg6n/vDkWUc1QiMEv2MPt18mxt60AT3bD0mG0wccbdaIRUS4k1yvwVe+STCUcG/PWgLY5nmb8bSwf4jiq6AdLoC6jQWcjDlwFJuXXekKY8cuE5OKn03iHFY7CNnxvGhart8pjOoNOBbkBoy6vdSJlL0zRfjyS+dA9pfWBTL1awKAQ5FZAIQV+HSnt5KS6VbQJF299orC6XQIhVk+WnbplfuFM+ahGHy/+7Pn46fWG66Fh9YxjyH2MXvE+7DdNybEEMIh+JRl9GAT4b+RR49JAYPHLTvnIjaDuDJDF/fIa4MewBmBsU7cELQG9uOVaABx9d3F8qh2IFiRgB"
+						},
+						{
+							"type": "text",
+							"text": "This is a private demo app (v1.0.0) that uses Bun as its test runner."
+						}
+					],
+					"api": "anthropic-messages",
+					"provider": "anthropic",
+					"model": "claude-haiku-4-5",
+					"usage": {
+						"input": 8,
+						"output": 81,
+						"cacheRead": 21432,
+						"cacheWrite": 206,
+						"totalTokens": 21727,
+						"cost": {
+							"input": 0.000008,
+							"output": 0.00040500000000000003,
+							"cacheRead": 0.0021432,
+							"cacheWrite": 0.000412,
+							"total": 0.0029682000000000003
+						},
+						"cttl": {
+							"ephemeral1h": 206
+						}
+					},
+					"stopReason": "stop",
+					"timestamp": 1794475195120,
+					"responseId": "msg_fixture",
+					"credentialId": 1,
+					"upstreamModel": "claude-haiku-4-5-20251001",
+					"duration": 1558.082875,
+					"ttft": 819.6832910000003,
+					"completedAt": 1794475196697,
+					"contextSnapshot": {
+						"promptTokens": 21646,
+						"nonMessageTokens": 19774,
+						"toolSchemaTokens": 7388,
+						"compactionEpoch": 0
+					},
+					"errorId": 0
+				}
+			}
+		],
+		"stream": null,
+		"streamDone": false,
+		"activeTools": [],
+		"working": false,
+		"status": {
+			"sessionId": "sess-1",
+			"cwd": "/work/project",
+			"thinkingLevel": "high",
+			"isStreaming": false,
+			"isCompacting": false,
+			"queue": {
+				"steering": [],
+				"followUp": [],
+				"liveSteered": 0
+			},
+			"todos": [],
+			"cost": 0.0152149
+		},
+		"uiRequests": [],
+		"notices": [],
+		"closed": null,
+		"statuses": [],
+		"widgets": [],
+		"title": null,
+		"commands": [],
+		"subagents": [],
+		"btw": []
+	}
+}

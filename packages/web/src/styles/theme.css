@@ -1,0 +1,57 @@
+/* App-owned palette, mapped onto collab-web's semantic tokens. light-dark() follows
+ * its color-scheme, including the system fallback and explicit theme toggle. */
+:root,
+:root:not([data-theme]),
+[data-theme="light"],
+[data-theme="dark"] {
+	--bg: light-dark(oklch(0.97 0.005 260), oklch(0.145 0.01 260));
+	--panel: light-dark(oklch(0.96 0.005 260), oklch(0.17 0.01 260));
+	--bg-raised: light-dark(oklch(0.99 0.003 260), oklch(0.22 0.01 260));
+	--bg-inset: light-dark(oklch(0.93 0.005 260 / 0.7), oklch(0.19 0.01 260 / 0.7));
+	--bg-overlay: light-dark(oklch(0.93 0.005 260), oklch(0.22 0.01 260));
+	--glass: light-dark(oklch(0.97 0.005 260 / 0.9), oklch(0.19 0.01 260 / 0.9));
+	--hover: light-dark(oklch(0.87 0.005 260 / 0.4), oklch(0.25 0.01 260 / 0.6));
+	--selected: light-dark(oklch(0.87 0.005 260 / 0.7), oklch(0.30 0.02 255 / 0.5));
+	--fg: light-dark(oklch(0.18 0.01 260), oklch(0.93 0.005 260));
+	--fg-muted: light-dark(oklch(0.40 0.01 260), oklch(0.72 0.01 260));
+	/* Faint is still text: ≥4.5:1 on --bg, --panel and the selected row in both themes. */
+	--fg-faint: light-dark(oklch(0.49 0.01 260), oklch(0.62 0.01 260));
+	--fg-inverse: light-dark(white, oklch(0.145 0.01 260));
+	--accent-a: oklch(0.65 0.20 300);
+	--accent-b: oklch(0.57 0.24 293);
+	--accent: light-dark(oklch(0.50 0.22 293), oklch(0.75 0.16 293));
+	--accent-fg: white;
+	--accent-muted: light-dark(oklch(0.57 0.24 293 / 0.10), oklch(0.65 0.20 300 / 0.15));
+	--accent-gradient: linear-gradient(100deg, var(--accent-a), var(--accent-b));
+	--ambient-a: oklch(0.65 0.20 300 / 0.04);
+	--ambient-b: oklch(0.57 0.24 293 / 0.03);
+	--ok: light-dark(oklch(0.50 0.17 165), oklch(0.65 0.17 165));
+	--live: var(--ok);
+	--warn: light-dark(oklch(0.62 0.17 80), oklch(0.72 0.17 80));
+	--err: light-dark(oklch(0.52 0.22 25), oklch(0.60 0.20 25));
+	/* Status hues dark enough (light) or light enough (dark) for small text on panels and their own tints. */
+	--ok-text: color-mix(in oklab, var(--ok) 80%, var(--fg));
+	--warn-text: color-mix(in oklab, var(--warn) 65%, var(--fg));
+	--err-text: color-mix(in oklab, var(--err) 75%, var(--fg));
+	--border: light-dark(oklch(0.80 0.01 260 / 0.25), oklch(0.30 0.01 260 / 0.3));
+	--border-strong: light-dark(oklch(0.75 0.01 260 / 0.35), oklch(0.35 0.01 260 / 0.5));
+	--edge-top: var(--border-strong);
+	--edge-bottom: var(--border);
+	--ring: var(--accent);
+	--ring-soft: var(--accent-muted);
+	/* Radii: `xs` for inline marks (badges, code), `sm`/default for rows and fields, `lg` for surfaces. */
+	--radius-xs: 4px;
+	--radius-sm: 8px;
+	--radius: 12px;
+	--radius-lg: 22px;
+	--radius-xl: 24px;
+	/* Type scale: every font-size in the app's own CSS is one of these (inputs on touch stay 16px against iOS zoom). */
+	--fs-xs: 11px;
+	--fs-sm: 12px;
+	--fs-md: 13px;
+	--fs-base: 14px;
+	--fs-lg: 16px;
+	--fs-xl: 18px;
+	--shadow-card: 0 1px 3px oklch(0.12 0.02 260 / 0.06);
+	--shadow-overlay: 0 20px 60px -20px light-dark(oklch(0.30 0.02 260 / 0.25), oklch(0.10 0.02 260 / 0.8));
+}

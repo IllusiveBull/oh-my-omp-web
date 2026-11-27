@@ -1,0 +1,710 @@
+/* Files: read-only browsing of a worktree — tree, git changes, viewer (source, images, diffs). Colours come from the
+   shared tokens, so both colour schemes apply. The dock panel (a `dock` size container): tree and viewer side by side when
+   wide; one of them at a time when narrow (≤720px of dock width). */
+
+/* Tool card paths that resolve to a file of a registered worktree, and omp URLs (`local://`, …) the machine can locate */
+.session-transcript .tv-path[data-openable="true"] {
+	cursor: pointer;
+	text-decoration: underline dotted;
+	text-underline-offset: 2px;
+}
+.session-transcript .tv-path[data-openable="true"]:hover {
+	color: var(--accent);
+}
+/* A click on an omp URL found no file: dimmed, the tooltip says why */
+.session-transcript [data-open-failed="true"] {
+	color: var(--fg-faint);
+	text-decoration-style: wavy;
+	text-decoration-color: var(--err);
+}
+
+.files {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	height: 100%;
+	min-height: 0;
+	min-width: 0;
+}
+
+/* Header */
+.files-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 8px;
+	padding: 8px 12px;
+	border-bottom: 1px solid var(--border);
+}
+/* The back buttons only exist in the one-pane layout (see the dock container rule at the end). */
+.files-back,
+.files-viewer-back {
+	display: none;
+}
+.files-title {
+	display: flex;
+	flex: 1 1 200px;
+	align-items: baseline;
+	gap: 8px;
+	min-width: 0;
+	overflow: hidden;
+}
+.files-head-actions {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: 8px;
+	margin-left: auto;
+}
+.files-root {
+	flex: 0 1 auto;
+	min-width: 4em;
+	overflow: hidden;
+	font-weight: 600;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.files-branch {
+	flex: 0 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+	color: var(--fg-muted);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.files-machine {
+	flex: 0 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	font-size: var(--fs-sm);
+	color: var(--fg-faint);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.files-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: var(--fs-sm);
+	color: var(--fg-muted);
+	white-space: nowrap;
+}
+.files-toggle input {
+	padding: 0;
+	accent-color: var(--accent);
+}
+.files-refresh[data-busy="true"] svg {
+	animation: files-spin 0.9s linear infinite;
+}
+@keyframes files-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.files-refresh[data-busy="true"] svg {
+		animation: none;
+	}
+}
+.files-offline {
+	padding: 6px 16px;
+	border-bottom: 1px solid var(--border);
+	background: color-mix(in oklch, var(--warn) 12%, transparent);
+	color: var(--warn-text);
+	font-size: var(--fs-sm);
+}
+
+/* Body: tree column and viewer */
+.files-body {
+	display: grid;
+	grid-template-columns: minmax(160px, min(40%, 260px)) minmax(0, 1fr);
+	grid-template-rows: minmax(0, 1fr);
+	flex: 1;
+	min-height: 0;
+}
+.files-side {
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	min-width: 0;
+	border-right: 1px solid var(--border);
+}
+.files-main {
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	min-width: 0;
+}
+/* Tree / Changes: a segmented control, a pill track holding pill segments. */
+.files-tabs {
+	display: flex;
+	flex: none;
+	gap: 2px;
+	margin: 8px;
+	padding: 2px;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	background: var(--bg-inset);
+}
+.files-tab {
+	display: inline-flex;
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	min-height: 28px;
+	padding: 0 10px;
+	background: none;
+	border: 0;
+	border-radius: 999px;
+	color: var(--fg-muted);
+	font-size: var(--fs-md);
+	font-weight: 500;
+	cursor: pointer;
+	transition:
+		color 120ms,
+		background-color 120ms;
+}
+.files-tab:hover {
+	color: var(--fg);
+}
+.files-tab--on,
+.files-tab--on:hover {
+	background: var(--bg-raised);
+	box-shadow: 0 0 0 1px var(--border-strong);
+	color: var(--fg);
+}
+.files-count {
+	display: inline-block;
+	min-width: 18px;
+	padding: 0 6px;
+	border-radius: 999px;
+	background: var(--selected);
+	color: var(--fg-muted);
+	font-size: var(--fs-xs);
+	line-height: 18px;
+	text-align: center;
+}
+/* GitHub's diff summary (Files view header, Changes tab): file count, `+added −removed`, five squares. */
+.diffstat {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-family: var(--font-mono);
+	font-size: var(--fs-xs);
+	font-weight: 600;
+	white-space: nowrap;
+}
+.diffstat-added {
+	color: var(--ok-text);
+}
+.diffstat-removed {
+	color: var(--err-text);
+}
+.diffstat-blocks {
+	display: block;
+	flex: none;
+}
+.diffstat-block {
+	fill: var(--border-strong);
+}
+.diffstat-block[data-kind="added"] {
+	fill: var(--ok);
+}
+.diffstat-block[data-kind="removed"] {
+	fill: var(--err);
+}
+.files-side-body {
+	flex: 1;
+	min-height: 0;
+	overflow: auto;
+	padding: 4px 0;
+}
+.files-note {
+	padding: 4px 12px;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+.files-tree-error {
+	padding: 4px 12px;
+	color: var(--err-text);
+	font-size: var(--fs-sm);
+	overflow-wrap: anywhere;
+}
+.files-node-loading {
+	padding: 4px 12px;
+	color: var(--fg-faint);
+	font-size: var(--fs-sm);
+}
+
+/* Tree */
+.files-tree,
+.files-children,
+.files-changes {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.files-node-main,
+.files-change-main {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: 100%;
+	min-width: 0;
+	min-height: 26px;
+	padding: 3px 12px 3px 8px;
+	background: none;
+	border: 0;
+	color: var(--fg);
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+	text-align: left;
+	cursor: pointer;
+}
+.files-node-main:hover,
+.files-change-main:hover {
+	background: var(--hover);
+}
+.files-node-main:focus-visible,
+.files-change-main:focus-visible,
+.files-tab:focus-visible,
+.files-crumb:focus-visible {
+	outline: 2px solid var(--ring);
+	outline-offset: -2px;
+}
+.files-node--on > .files-node-main,
+.files-change--on > .files-change-main {
+	background: var(--selected);
+}
+.files-node--ignored > .files-node-main {
+	color: var(--fg-faint);
+}
+.files-node--inert > .files-node-main {
+	color: var(--fg-faint);
+	cursor: default;
+}
+.files-node-icons {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	gap: 2px;
+	color: var(--fg-muted);
+}
+.files-node:not([data-expanded]) > .files-node-main .files-node-icons {
+	padding-left: 14px;
+}
+.files-node-name {
+	flex: 0 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.files-node-link {
+	min-width: 0;
+	overflow: hidden;
+	color: var(--fg-faint);
+	font-size: var(--fs-sm);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.files-node-flag {
+	flex: none;
+	padding: 0 5px;
+	border: 1px solid var(--border-strong);
+	border-radius: 999px;
+	color: var(--fg-faint);
+	font-size: var(--fs-xs);
+}
+.files-mark {
+	flex: none;
+	margin-left: auto;
+	min-width: 14px;
+	color: var(--fg-muted);
+	font-size: var(--fs-xs);
+	font-weight: 600;
+	text-align: center;
+}
+.files-mark[data-status="modified"] {
+	color: var(--warn-text);
+}
+.files-mark[data-status="staged-modified"],
+.files-mark[data-status="added"] {
+	color: var(--ok-text);
+}
+.files-mark[data-status="deleted"],
+.files-mark[data-status="conflicted"] {
+	color: var(--err-text);
+}
+.files-mark[data-status="renamed"] {
+	color: var(--accent);
+}
+.files-mark[data-status="untracked"] {
+	color: var(--fg-muted);
+}
+.files-dot {
+	flex: none;
+	margin-left: auto;
+	min-width: 16px;
+	padding: 0 4px;
+	border-radius: 999px;
+	background: color-mix(in oklch, var(--warn) 22%, transparent);
+	color: var(--warn-text);
+	font-size: var(--fs-xs);
+	line-height: 16px;
+	text-align: center;
+}
+
+/* Changes */
+.files-changes-heading {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 12px 2px;
+	color: var(--fg-muted);
+	font-size: var(--fs-xs);
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+.files-change-main {
+	flex-wrap: nowrap;
+}
+.files-change-main .files-mark {
+	margin-left: 0;
+}
+.files-change-name {
+	flex: none;
+	max-width: 60%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.files-change-dir {
+	min-width: 0;
+	overflow: hidden;
+	color: var(--fg-faint);
+	font-size: var(--fs-sm);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.files-change-lines {
+	flex: none;
+	margin-left: auto;
+	gap: 4px;
+}
+
+/* Viewer */
+.files-viewer {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+	min-width: 0;
+}
+.files-viewer-head {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	border-bottom: 1px solid var(--border);
+}
+.files-crumbs {
+	flex: 1;
+	min-width: 0;
+	overflow-x: auto;
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+	white-space: nowrap;
+	scrollbar-width: thin;
+}
+.files-crumb {
+	padding: 0 2px;
+	background: none;
+	border: 0;
+	color: var(--fg-muted);
+	font: inherit;
+}
+button.files-crumb:hover {
+	color: var(--fg);
+	text-decoration: underline;
+}
+.files-crumb--last {
+	color: var(--fg);
+}
+.files-crumb-sep {
+	color: var(--fg-faint);
+}
+.files-modes {
+	display: flex;
+	flex: none;
+	flex-wrap: wrap;
+	gap: 6px;
+	padding: 8px 12px;
+	border-bottom: 1px solid var(--border);
+}
+.files-badges {
+	display: flex;
+	flex: none;
+	flex-wrap: wrap;
+	gap: 6px;
+	padding: 6px 12px;
+}
+.files-badge {
+	padding: 0 7px;
+	border: 1px solid var(--border-strong);
+	border-radius: 999px;
+	color: var(--fg-muted);
+	font-size: var(--fs-xs);
+	line-height: 18px;
+}
+.files-banner {
+	flex: none;
+	margin: 8px 12px 0;
+	padding: 6px 10px;
+	background: var(--bg-raised);
+	border: 1px solid var(--border-strong);
+	border-radius: var(--radius-sm);
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+.files-banner[data-kind="lossy"],
+.files-banner[data-kind="stale"],
+.files-banner[data-kind="truncated"] {
+	border-color: var(--warn);
+	color: var(--warn-text);
+}
+.files-error {
+	flex: none;
+	margin: 8px 12px;
+	padding: 8px 10px;
+	border: 1px solid var(--err);
+	border-radius: var(--radius-sm);
+	color: var(--err-text);
+	font-size: var(--fs-sm);
+	overflow-wrap: anywhere;
+}
+.files-empty {
+	margin: 16px 12px;
+	color: var(--fg-muted);
+	overflow-wrap: anywhere;
+}
+
+/* Code: line numbers come from data-line, so they are not part of the text */
+.files-code {
+	flex: 1;
+	min-height: 0;
+	margin: 0;
+	padding: 6px 0;
+	overflow: auto;
+	background: var(--bg-inset);
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+	line-height: 1.5;
+	tab-size: 4;
+}
+/* A Markdown file in Preview: the transcript's renderer (`.tr-md` inside), scrolled like the source */
+.files-markdown {
+	flex: 1;
+	min-height: 0;
+	overflow: auto;
+	padding: 12px 16px;
+	font-size: var(--fs-base);
+	line-height: 1.6;
+}
+.files-code[data-loading="true"] {
+	opacity: 0.6;
+}
+.files-line {
+	min-width: max-content;
+	padding-right: 12px;
+	white-space: pre;
+}
+.files-line::before {
+	content: attr(data-line);
+	position: sticky;
+	left: 0;
+	display: inline-block;
+	min-width: 5ch;
+	margin-right: 1.5ch;
+	padding: 0 1ch;
+	background: var(--bg-inset);
+	color: var(--fg-faint);
+	text-align: right;
+	user-select: none;
+}
+.files-line--target,
+.files-line--target::before {
+	background: color-mix(in oklch, var(--accent) 16%, var(--bg-inset));
+}
+.hl-comment {
+	color: var(--fg-faint);
+	font-style: italic;
+}
+.hl-keyword {
+	color: color-mix(in oklch, var(--accent) 72%, var(--fg));
+}
+.hl-function,
+.hl-type {
+	color: color-mix(in oklch, var(--fg) 78%, var(--accent-a));
+}
+.hl-variable {
+	color: var(--fg);
+}
+.hl-string,
+.hl-inserted {
+	color: var(--ok-text);
+}
+.hl-number {
+	color: var(--warn-text);
+}
+.hl-operator,
+.hl-punctuation {
+	color: var(--fg-muted);
+}
+.hl-deleted {
+	color: var(--err-text);
+}
+
+.files-pager {
+	display: flex;
+	flex: none;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	border-top: 1px solid var(--border);
+}
+.files-pageinfo {
+	flex: 1;
+	min-width: 120px;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+.files-goto {
+	display: inline-flex;
+	gap: 6px;
+}
+.files-goto input {
+	width: 84px;
+	padding: 4px 8px;
+}
+
+/* Images */
+.files-image {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 8px;
+	min-height: 0;
+	padding: 12px;
+	overflow: auto;
+}
+.files-image img {
+	align-self: flex-start;
+	max-width: 100%;
+	height: auto;
+	background: var(--bg-inset);
+	border: 1px solid var(--border-strong);
+}
+.files-image-meta {
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+
+/* Diffs: the transcript's diff rows, with the tool-card colour bridge they expect */
+.files-diff-wrap {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 8px;
+	min-height: 0;
+	padding: 8px 0;
+	overflow: auto;
+}
+.files-diff-wrap[data-loading="true"] {
+	opacity: 0.6;
+}
+.files-diff-head {
+	display: flex;
+	flex: none;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 4px 12px;
+	padding: 0 12px;
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+	overflow-wrap: anywhere;
+}
+.files-diff-rename {
+	color: var(--fg-muted);
+}
+.files-diff-added {
+	color: var(--ok-text);
+}
+.files-diff-removed {
+	color: var(--err-text);
+}
+.files-diff {
+	--tv-fg: var(--fg);
+	--tv-muted: var(--fg-muted);
+	--tv-faint: var(--fg-faint);
+	--tv-accent: var(--accent);
+	--tv-ok: var(--ok-text);
+	--tv-err: var(--err-text);
+	--tv-warn: var(--warn-text);
+	--tv-border: var(--border);
+	--tv-inset: var(--bg-inset);
+	--tv-raised: var(--bg-raised);
+	--tv-ring: var(--ring);
+	--tv-mono: var(--font-mono);
+	padding: 0 12px;
+	color: var(--fg);
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+	line-height: 1.5;
+}
+.files-diff .tv-diff {
+	font-size: var(--fs-sm);
+}
+
+/* Narrow: inside the dock (a right-hand panel 420–640px wide) one pane at a time — the tree or the viewer. */
+@container dock (max-width: 720px) {
+	.files-back,
+	.files-viewer-back {
+		display: inline-flex;
+	}
+	.files-body {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.files-side {
+		border-right: 0;
+	}
+	.files[data-screen="list"] .files-main,
+	.files[data-screen="viewer"] .files-side {
+		display: none;
+	}
+}
+
+/* Touch: finger-sized rows and controls; 16px inputs keep iOS from zooming on focus. */
+@media (pointer: coarse) {
+	.files-back,
+	.files-viewer-back,
+	.files-node-main,
+	.files-change-main,
+	.files-tab {
+		min-height: 40px;
+	}
+	.files-pager .btn,
+	.files-modes .btn,
+	.files-copy {
+		min-height: 40px;
+	}
+	.files-goto input {
+		font-size: var(--fs-lg);
+	}
+}

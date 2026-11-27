@@ -1,0 +1,704 @@
+/* Accounts & login: the credential broker, the sign-in flow, accounts, usage, the migration guide. Colours come from
+   the shared tokens (so any theme applies); layout stays a single column so it works from phone to desktop.
+   One card per section; the items inside a card are rows divided by a hairline, never cards of their own.
+   Type scale: --fs-lg page title, --fs-base card title, --fs-md body (names, provider headings, facts),
+   --fs-sm secondary (notes, meta lines, usage rows), --fs-xs chips. Status text uses the --*-text tokens. */
+
+.accounts {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 16px;
+	overflow-y: auto;
+	min-height: 0;
+	min-width: 0;
+}
+
+.accounts-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+.accounts-head h2 {
+	margin: 0;
+	font-size: var(--fs-lg);
+}
+/* Reload sits beside the title, like each card's own refresh; Back keeps the far end. */
+.accounts-head .accounts-close {
+	margin-left: auto;
+}
+
+.acct-card {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 0;
+	padding: 16px;
+	background: var(--bg-raised);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-lg);
+}
+.acct-card h3 {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	font-size: var(--fs-base);
+	font-weight: 600;
+}
+.acct-card h4 {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 8px;
+	margin: 0;
+	font-size: var(--fs-md);
+	font-weight: 600;
+}
+/* "updated 1 minute ago" after the card title's Refresh. */
+.acct-head-note {
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+	font-weight: 400;
+}
+.acct-count {
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+	font-weight: 400;
+}
+
+.acct-note {
+	margin: 0;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+	overflow-wrap: anywhere;
+}
+.acct-ok {
+	color: var(--ok-text);
+}
+
+/* "How this works": the explanation sits behind a disclosure under the controls, not above them. */
+.acct-how {
+	padding-top: 8px;
+	border-top: 1px solid var(--border);
+}
+.acct-how[open] summary {
+	margin-bottom: 6px;
+}
+.acct-how summary,
+.acct-terminal summary {
+	min-height: 24px;
+	padding: 2px 0;
+	cursor: pointer;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+.acct-how summary:hover,
+.acct-terminal summary:hover {
+	color: var(--fg);
+}
+.acct-how summary:focus-visible,
+.acct-terminal summary:focus-visible {
+	outline: 2px solid var(--ring);
+	outline-offset: 2px;
+	border-radius: var(--radius-xs);
+}
+
+.acct-agy-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+.acct-agy-machine {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px 0;
+	border-top: 1px solid var(--border);
+}
+.acct-agy-machine:first-child {
+	padding-top: 0;
+	border-top: 0;
+}
+.acct-agy-machine:last-child {
+	padding-bottom: 0;
+}
+.acct-agy-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+/* The sign-in methods and "Open in terminal": equal-height buttons on a grid, two columns, one on a phone. */
+.acct-agy-actions {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 8px;
+}
+.acct-agy-actions .btn {
+	justify-content: flex-start;
+	height: auto;
+	padding-block: 6px;
+	text-align: left;
+	line-height: 1.3;
+}
+.acct-agy-cmd {
+	font-family: var(--font-mono, monospace);
+	font-size: var(--fs-sm);
+}
+
+.acct-chip {
+	display: inline-block;
+	padding: 0 6px;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	color: var(--fg-muted);
+	font-size: var(--fs-xs);
+	font-weight: 500;
+	line-height: 18px;
+	white-space: nowrap;
+}
+.acct-chip--ok {
+	color: var(--ok-text);
+	border-color: var(--ok);
+}
+.acct-chip--warn {
+	color: var(--warn-text);
+	border-color: var(--warn);
+}
+.acct-chip--bad {
+	color: var(--err-text);
+	border-color: var(--err);
+}
+
+.acct-facts {
+	display: grid;
+	grid-template-columns: max-content minmax(0, 1fr);
+	gap: 2px 12px;
+	margin: 0;
+	font-size: var(--fs-md);
+}
+.acct-facts dt {
+	color: var(--fg-muted);
+}
+.acct-facts dd {
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+
+.acct-machines {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	font-size: var(--fs-md);
+}
+.acct-machines > li {
+	padding: 6px 0;
+	border-top: 1px solid var(--border);
+}
+.acct-machines > li:first-child {
+	padding-top: 0;
+	border-top: 0;
+}
+.acct-machines > li:last-child {
+	padding-bottom: 0;
+}
+
+/* Keep the shared sign-in flow visible even when its provider was far down the page. */
+.handoff-overlay.acct-flow-overlay {
+	padding: calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right))
+		calc(16px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+	align-items: center;
+	background: var(--backdrop);
+}
+.acct-flow {
+	width: min(640px, 100%);
+	max-height: 100%;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	border-color: var(--ring);
+	box-shadow: var(--shadow-overlay);
+	overflow-wrap: anywhere;
+}
+.acct-link,
+.acct-actions,
+.acct-code-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+.acct-code-row input {
+	flex: 1 1 220px;
+	min-width: 0;
+	font-size: var(--fs-lg); /* no zoom on focus on iOS */
+}
+.acct-code {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+.acct-progress {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+.acct-failure {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	color: var(--err-text);
+}
+.acct-failure p {
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+.acct-failure .acct-note {
+	color: var(--fg-muted);
+}
+
+.acct-command {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+.acct-command code {
+	flex: 1 1 240px;
+	min-width: 0;
+	padding: 6px 8px;
+	background: var(--bg-inset);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-sm);
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+	overflow-wrap: anywhere;
+	user-select: all;
+}
+
+/* Providers: rows divided by a hairline */
+.acct-providers,
+.acct-accounts {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+}
+.acct-providers {
+	max-height: 340px;
+	overflow-y: auto;
+}
+.acct-providers > li {
+	padding: 6px 0;
+	border-top: 1px solid var(--border);
+}
+.acct-providers > li:first-child {
+	border-top: 0;
+}
+.acct-provider-row,
+.acct-account-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 8px;
+}
+.acct-provider-name,
+.acct-account-label {
+	flex: 1 1 180px;
+	min-width: 0;
+	overflow-wrap: anywhere;
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+}
+.acct-group {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+.acct-group + .acct-group {
+	border-top: 1px solid var(--border);
+	padding-top: 12px;
+}
+
+/* One stored account: name + chips + Log out, then muted meta lines, then its usage rows; a row of its group, not a card. */
+.acct-account,
+.acct-disabled {
+	padding: 8px 0;
+	border-top: 1px solid var(--border);
+}
+.acct-account:first-child,
+.acct-disabled:first-child {
+	border-top: 0;
+	padding-top: 0;
+}
+.acct-account:last-child,
+.acct-disabled:last-child {
+	padding-bottom: 0;
+}
+.acct-account {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.acct-disabled {
+	font-size: var(--fs-md);
+}
+.acct-account-name {
+	font-size: var(--fs-md);
+	font-weight: 500;
+}
+.acct-meta {
+	margin: 0;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+	overflow-wrap: anywhere;
+}
+.acct-warn {
+	color: var(--warn-text);
+}
+/* A lucide glyph leading a line of text. */
+.acct-inline-icon {
+	display: inline-block;
+	vertical-align: -2px;
+}
+
+/* Usage rows: one grid per account, every row a subgrid, so label / bar / percent / reset line up. */
+.acct-limits {
+	list-style: none;
+	margin: 4px 0 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: fit-content(40%) minmax(60px, 1fr) max-content max-content;
+	gap: 6px 12px;
+	font-size: var(--fs-sm);
+	font-variant-numeric: tabular-nums;
+}
+.acct-limits li {
+	grid-column: 1 / -1;
+	display: grid;
+	grid-template-columns: subgrid;
+	align-items: center;
+}
+.acct-limit-label {
+	overflow-wrap: anywhere;
+}
+.acct-limit-value {
+	text-align: right;
+	font-weight: 500;
+}
+.acct-limit-value--warning {
+	color: var(--warn-text);
+}
+.acct-limit-value--exhausted {
+	color: var(--err-text);
+}
+.acct-limit-reset {
+	color: var(--fg-muted);
+}
+.acct-limit-notes {
+	grid-column: 1 / -1;
+	color: var(--fg-muted);
+}
+.acct-bar {
+	height: 6px;
+	background: color-mix(in oklch, var(--fg) 10%, transparent);
+	border-radius: 999px;
+	overflow: hidden;
+}
+.acct-bar-fill {
+	display: block;
+	height: 100%;
+	background: var(--ok);
+}
+.acct-bar-fill--warning {
+	background: var(--warn);
+}
+.acct-bar-fill--exhausted {
+	background: var(--err);
+}
+.acct-bar-fill--unknown {
+	background: var(--fg-faint);
+}
+
+/* Pooled capacity of a provider with several accounts: a label, then one item per window. */
+.acct-capacity {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 4px 16px;
+	margin: 0;
+	font-size: var(--fs-sm);
+	font-variant-numeric: tabular-nums;
+}
+.acct-capacity-title {
+	color: var(--fg-muted);
+}
+.acct-capacity-item strong {
+	font-weight: 600;
+}
+
+/* The sidebar's entry: a `.btn` (the look comes from ui.css); only its place in the bar is set here */
+.acct-dot--ok {
+	background: var(--ok);
+}
+.acct-dot--warn {
+	background: var(--warn);
+}
+.acct-dot--bad {
+	background: var(--err);
+}
+
+@media (max-width: 720px) {
+	.accounts {
+		padding: 12px;
+	}
+	.acct-card {
+		padding: 14px;
+	}
+	.acct-agy-actions {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	/* Label, percent and reset on one line; the bar full width under them. */
+	.acct-limits {
+		grid-template-columns: minmax(0, 1fr) max-content max-content;
+		row-gap: 4px;
+	}
+	.acct-limits .acct-bar {
+		grid-column: 1 / -1;
+		order: 3;
+		margin-bottom: 4px;
+	}
+}
+
+@media (pointer: coarse) {
+	.acct-how summary,
+	.acct-terminal summary {
+		padding: 8px 0;
+	}
+}
+
+/* ── Toolbar usage pill (usage-menu.tsx): one ring per account, a menu with every limit ── */
+
+.usage-pill {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	gap: 12px;
+	min-height: 34px;
+	max-width: 60vw;
+	overflow: hidden;
+	padding: 0 12px;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	background: var(--bg-inset);
+	color: var(--fg);
+	font: inherit;
+	font-size: var(--fs-sm);
+	white-space: nowrap;
+	cursor: pointer;
+}
+.usage-pill:hover,
+.usage-pill[aria-expanded="true"] {
+	background: var(--hover);
+}
+.usage-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	color: var(--fg-muted);
+}
+.usage-name {
+	color: var(--fg);
+}
+.usage-pct {
+	font-variant-numeric: tabular-nums;
+	font-weight: 600;
+}
+.usage-pct--ok {
+	color: var(--fg-muted);
+}
+.usage-pct--warning {
+	color: var(--warn-text);
+}
+.usage-pct--exhausted {
+	color: var(--err-text);
+}
+.usage-pct--signed-out {
+	color: var(--err-text);
+	font-weight: 500;
+}
+.usage-ring {
+	flex: none;
+	fill: none;
+	stroke-width: 2.5;
+}
+.usage-ring-track {
+	stroke: color-mix(in oklch, var(--fg) 12%, transparent);
+}
+.usage-ring-fill {
+	stroke: var(--fg-faint);
+	stroke-linecap: round;
+}
+.usage-ring--ok .usage-ring-fill {
+	stroke: var(--ok);
+}
+.usage-ring--warning .usage-ring-fill {
+	stroke: var(--warn);
+}
+.usage-ring--exhausted .usage-ring-fill {
+	stroke: var(--err);
+}
+/* An Antigravity sign-in that is gone: a dashed red ring, nothing filled. */
+.usage-ring--signed-out .usage-ring-track {
+	stroke: var(--err);
+	stroke-dasharray: 2 2;
+}
+
+/* Calm by default: neutral text and bars, color only where a limit is near or past its end. Accounts are separated
+ * by a hairline; inside one, the percentage is the number to read and the reset time is secondary. */
+.usage-panel {
+	display: flex;
+	flex-direction: column;
+	width: min(380px, calc(100vw - 32px));
+	padding: 4px 12px 8px;
+	font-size: var(--fs-md);
+}
+.usage-panel-head {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding-bottom: 4px;
+}
+.usage-panel-head > span {
+	margin-right: auto;
+	font-weight: 600;
+}
+.usage-panel > .usage-note {
+	padding-bottom: 8px;
+}
+.usage-acct {
+	padding: 12px 0;
+	border-top: 1px solid var(--border);
+}
+.usage-acct:last-child {
+	padding-bottom: 4px;
+}
+.usage-acct h4 {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	margin: 0 0 8px;
+	font-size: var(--fs-md);
+	font-weight: 600;
+}
+.usage-identity {
+	margin-left: auto;
+	overflow: hidden;
+	font-weight: 400;
+	font-size: var(--fs-sm);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.usage-acct > .usage-note {
+	margin: -4px 0 8px;
+	text-wrap: pretty;
+}
+.usage-limits {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) max-content max-content;
+	align-items: baseline;
+	column-gap: 12px;
+	row-gap: 5px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.usage-limit {
+	display: contents;
+}
+.usage-limit-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.usage-limit-reset {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 3px;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+	font-variant-numeric: tabular-nums;
+}
+.usage-limit-reset > svg {
+	flex: none;
+	align-self: center;
+}
+.usage-limit-pct {
+	min-width: 4ch;
+	text-align: right;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+.usage-limit[data-status="warning"] .usage-limit-pct {
+	color: var(--warn-text);
+}
+.usage-limit[data-status="exhausted"] .usage-limit-pct {
+	color: var(--err-text);
+}
+.usage-limit-bar {
+	grid-column: 1 / -1;
+	height: 4px;
+	margin-bottom: 7px;
+}
+.usage-limit:last-child .usage-limit-bar {
+	margin-bottom: 0;
+}
+.usage-limit-bar .acct-bar-fill--ok {
+	background: color-mix(in oklch, var(--fg) 45%, transparent);
+}
+.usage-note {
+	margin: 0;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+
+@media (pointer: coarse) {
+	.usage-pill {
+		min-height: 46px;
+	}
+}
+/* Phones share the header row with the title and the dock toolbar: rings only; names and numbers are in the menu. */
+@media (max-width: 720px) {
+	.usage-pill {
+		gap: 8px;
+		padding: 0 10px;
+	}
+	.usage-name,
+	.usage-pct {
+		display: none;
+	}
+	/* A bottom sheet on phones (app.css); this one leaves the top of the page in view. */
+	.chip-pop:has(> .usage-panel) {
+		max-height: 70dvh;
+	}
+	.usage-panel {
+		font-size: var(--fs-base);
+	}
+	.usage-acct h4 {
+		font-size: var(--fs-base);
+	}
+	.usage-limit-reset {
+		font-size: var(--fs-md);
+	}
+}

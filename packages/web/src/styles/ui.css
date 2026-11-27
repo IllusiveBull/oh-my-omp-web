@@ -1,0 +1,283 @@
+/*
+ * Shared controls: buttons, icon buttons, section headers, count badges. Every view uses these instead of its own
+ * button look. Colors come from the design tokens only (collab-web `tokens.css`).
+ *
+ * Shapes (one rule for the whole app): what you press is fully round — text buttons, chips and
+ * single-line inputs are pills, icon buttons are circles; rows in a list or menu are rounded rectangles
+ * (`--radius`); surfaces that hold them (popovers, cards, sheets) are `--radius-lg`. Nothing else gets a radius
+ * of its own.
+ *
+ * Buttons: `.btn` (secondary: raised, hairline) plus at most one variant — `--primary` (the one main action of a
+ * form or bar), `--ghost` (quiet, no frame), `--danger` (destroys or stops something) — and optionally `--small`
+ * and `--on` (a toggle that is held on). Heights: 32px, `--small` 28px. Glyphs inside are lucide icons at 16px
+ * (14px in `--small`).
+ * Icon buttons: `.icon-btn` (28px, 16px glyph; `--small`: the same 28px with a 14px glyph), always labelled (`IconButton`).
+ */
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	min-height: 32px;
+	padding: 0 14px;
+	border: 1px solid var(--border-strong);
+	border-radius: 999px;
+	background: var(--bg-raised);
+	color: var(--fg);
+	font-size: var(--fs-md);
+	font-weight: 500;
+	line-height: 1.2;
+	white-space: nowrap;
+	text-decoration: none;
+	cursor: pointer;
+	transition:
+		background-color 120ms,
+		border-color 120ms,
+		color 120ms,
+		transform 80ms;
+}
+.btn svg {
+	flex: none;
+}
+.btn:hover:not(:disabled) {
+	background: color-mix(in oklch, var(--fg) 7%, var(--bg-raised));
+	border-color: color-mix(in oklch, var(--fg) 22%, transparent);
+}
+.btn:active:not(:disabled) {
+	transform: scale(0.97);
+}
+.btn:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
+.btn--primary {
+	background: var(--accent-b);
+	border-color: transparent;
+	color: var(--accent-fg);
+}
+.btn--primary:hover:not(:disabled) {
+	background: color-mix(in oklch, var(--accent-b) 86%, var(--fg));
+	border-color: transparent;
+}
+.btn--primary:disabled {
+	background: var(--selected);
+	color: var(--fg-faint);
+	opacity: 1;
+}
+
+.btn--ghost {
+	background: transparent;
+	border-color: transparent;
+	color: var(--fg-muted);
+}
+.btn--ghost:hover:not(:disabled) {
+	background: var(--selected);
+	border-color: transparent;
+	color: var(--fg);
+}
+
+.btn--danger {
+	background: color-mix(in oklch, var(--err) 12%, transparent);
+	border-color: color-mix(in oklch, var(--err) 35%, transparent);
+	color: var(--err);
+}
+.btn--danger:hover:not(:disabled) {
+	background: color-mix(in oklch, var(--err) 20%, transparent);
+	border-color: color-mix(in oklch, var(--err) 50%, transparent);
+}
+
+.btn--on,
+.btn--on:hover:not(:disabled) {
+	background: var(--selected);
+	border-color: color-mix(in oklch, var(--fg) 30%, transparent);
+	color: var(--fg);
+}
+
+.btn--small {
+	min-height: 28px;
+	padding: 0 11px;
+	gap: 5px;
+	font-size: var(--fs-sm);
+}
+
+/* An on/off switch (`role="switch"`): a pill whose thumb slides right and fills with the accent when checked. */
+.switch {
+	position: relative;
+	flex: none;
+	width: 34px;
+	height: 20px;
+	padding: 0;
+	border: 1px solid var(--border-strong);
+	border-radius: 999px;
+	background: color-mix(in oklch, var(--fg) 12%, var(--bg-raised));
+	cursor: pointer;
+	transition:
+		background-color 150ms,
+		border-color 150ms;
+}
+.switch-thumb {
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: var(--bg-raised);
+	box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+	transition: transform 150ms;
+}
+.switch[aria-checked="true"] {
+	background: var(--accent);
+	border-color: var(--accent);
+}
+.switch[aria-checked="true"] .switch-thumb {
+	transform: translateX(14px);
+}
+.switch:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+@media (prefers-reduced-motion: reduce) {
+	.switch,
+	.switch-thumb {
+		transition: none;
+	}
+}
+
+.icon-btn {
+	position: relative;
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: transparent;
+	color: var(--fg-muted);
+	cursor: pointer;
+	transition:
+		background-color 120ms,
+		color 120ms;
+}
+.icon-btn:hover:not(:disabled) {
+	background: var(--selected);
+	color: var(--fg);
+}
+.icon-btn[aria-pressed="true"],
+.icon-btn[aria-expanded="true"],
+.icon-btn--on {
+	background: var(--selected);
+	color: var(--fg);
+}
+.icon-btn:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+.icon-btn--danger:hover:not(:disabled) {
+	background: color-mix(in oklch, var(--err) 14%, transparent);
+	color: var(--err);
+}
+/* A dot in the corner of an icon button: something behind it wants attention. */
+.icon-btn-dot {
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	box-shadow: 0 0 0 2px var(--panel);
+	background: var(--fg-faint);
+}
+/* A count in the corner of an icon button (sub-agents, terminals); `data-live` while something behind it runs. */
+.icon-btn-badge {
+	position: absolute;
+	top: -2px;
+	right: -3px;
+	min-width: 14px;
+	height: 14px;
+	padding: 0 3px;
+	border-radius: 999px;
+	box-shadow: 0 0 0 2px var(--bg-inset);
+	background: var(--fg-faint);
+	color: var(--panel);
+	font-size: var(--fs-xs);
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	line-height: 14px;
+	text-align: center;
+	pointer-events: none;
+}
+.icon-btn-badge[data-live] {
+	background: var(--live);
+	color: var(--fg-inverse);
+}
+
+/* A row of icon buttons (toolbars, a row's hover actions). */
+.icon-row {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+}
+
+/* Section header: small uppercase label, optional count, actions on the right. */
+.section-head {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 28px;
+	padding: 0 4px 0 8px;
+	color: var(--fg-muted);
+	font-size: var(--fs-xs);
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	user-select: none;
+}
+.section-head-title {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.section-head-count {
+	color: var(--fg-faint);
+	font-size: var(--fs-xs);
+	font-weight: 500;
+	letter-spacing: 0;
+	font-variant-numeric: tabular-nums;
+}
+.section-head-actions {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	margin-left: auto;
+	text-transform: none;
+	letter-spacing: 0;
+}
+
+/* Count badge next to a label ("Changes 3"). */
+.count-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 18px;
+	height: 16px;
+	padding: 0 5px;
+	border-radius: 999px;
+	background: var(--selected);
+	color: var(--fg-muted);
+	font-size: var(--fs-xs);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+
+/* Thinner scrollbars than the base sheet's. */
+*::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}

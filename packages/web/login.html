@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+		<meta name="color-scheme" content="dark light" />
+		<meta name="theme-color" content="#000000" />
+		<meta name="robots" content="noindex" />
+		<title>oh-my-omp-web · sign in</title>
+		<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+	</head>
+	<body>
+		<main class="login">
+			<form class="login-card" id="login-form" method="post">
+				<h1 class="login-brand">
+					<img class="login-mark" src="/icon-192.png" alt="" width="32" height="32" />
+					<span class="login-title">oh-my-omp-web</span>
+				</h1>
+				<label class="login-field">
+					Access token
+					<input
+						type="password"
+						name="token"
+						autocomplete="off"
+						autocapitalize="off"
+						spellcheck="false"
+						autofocus
+						required
+					/>
+				</label>
+				<button type="submit" class="login-submit">Sign in</button>
+				<p class="login-error" role="alert" hidden></p>
+			</form>
+		</main>
+		<script type="module" src="./src/login/login.ts"></script>
+	</body>
+</html>

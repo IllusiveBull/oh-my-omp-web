@@ -1,0 +1,22 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"categories": {
+		"correctness": "warn"
+	},
+	"rules": {
+		"eslint/prefer-const": "error",
+		"eslint/no-unused-vars": [
+			"warn",
+			{
+				"argsIgnorePattern": "^_",
+				"varsIgnorePattern": "^_",
+				"caughtErrorsIgnorePattern": "^_",
+				"destructuredArrayIgnorePattern": "^_"
+			}
+		],
+		"react/no-array-index-key": "warn",
+		"typescript/no-explicit-any": "off",
+		"typescript/no-non-null-assertion": "off"
+	},
+	"ignorePatterns": ["vendor/**", "**/vendor/**", "**/node_modules/**", "**/dist/**", "**/*.js", "**/*.mjs", "**/*.cjs", "**/*.d.ts"]
+}

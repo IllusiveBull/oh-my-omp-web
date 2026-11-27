@@ -1,0 +1,9 @@
+{
+	"extends": "./tsconfig.base.json",
+	"include": ["scripts"],
+	"compilerOptions": {
+		// Same as packages/daemon: the scripts import daemon sources, which pull in upstream sources that import .md/.py as text.
+		"types": ["bun", "assets"],
+		"typeRoots": ["./vendor/oh-my-pi/types", "./node_modules/@types"]
+	}
+}

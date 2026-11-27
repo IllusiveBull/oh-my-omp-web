@@ -1,0 +1,34 @@
+{
+	"name": "@omp-web/web",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"main": "./src/index.ts",
+	"types": "./src/index.ts",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"build": "bun scripts/build.ts",
+		"dev": "bun scripts/build.ts --watch",
+		"check:types": "bun check --no-script -p tsconfig.json"
+	},
+	"dependencies": {
+		"@oh-my-pi/collab-web": "workspace:*",
+		"@oh-my-pi/pi-utils": "workspace:*",
+		"@oh-my-pi/pi-tui": "workspace:*",
+		"@oh-my-pi/pi-wire": "workspace:*",
+		"@omp-web/protocol": "workspace:*",
+		"@xterm/addon-fit": "0.11.0",
+		"@xterm/addon-unicode11": "0.9.0",
+		"@xterm/addon-web-links": "0.12.0",
+		"@xterm/xterm": "6.0.0",
+		"lucide-react": "catalog:",
+		"react": "catalog:",
+		"react-dom": "catalog:"
+	},
+	"devDependencies": {
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:"
+	}
+}

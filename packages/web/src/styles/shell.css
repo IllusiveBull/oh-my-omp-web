@@ -1,0 +1,753 @@
+/*
+ * The app shell: the sidebar (environment, new session, the session list) on the left, the main view (a session, the
+ * Accounts page) in the middle, and the dock (agents, terminal, changes, files) on the right, opened from the toolbar
+ * at the top right of the main view. Phones show one of them at a time.
+ */
+
+/* Let the fixed insets size the shell: 100dvh can be shorter than the iPad Home Screen viewport.
+   The opaque shell fills every edge; its content stays inside all four safe-area insets. */
+.app {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	min-height: 0;
+	padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+		env(safe-area-inset-left);
+	overflow: hidden;
+	background: var(--panel);
+}
+
+.app-main {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-width: 0;
+	min-height: 0;
+	background: var(--panel);
+}
+
+.app-empty {
+	margin: auto;
+	color: var(--fg-muted);
+}
+
+/* Without a session the toolbar sits in a bar of its own. */
+.app-bar {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 6px;
+	min-height: 44px;
+	padding: 6px 12px;
+	border-bottom: 1px solid var(--border);
+}
+
+/* ── Sidebar ── */
+
+.side {
+	display: flex;
+	flex: none;
+	flex-direction: column;
+	gap: 10px;
+	width: 272px;
+	min-height: 0;
+	padding: 10px 10px 12px;
+	overflow-y: auto;
+	border-right: 1px solid var(--border);
+	background: var(--bg);
+}
+
+.side-title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 32px;
+	padding-left: 6px;
+}
+.side-brand {
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	color: var(--fg);
+}
+.side-title-actions {
+	margin-left: auto;
+}
+.acct-dot--ok {
+	background: var(--ok);
+}
+.acct-dot--warn {
+	background: var(--warn);
+}
+.acct-dot--bad {
+	background: var(--err);
+}
+
+.side-note {
+	padding: 0 6px;
+	color: var(--warn-text);
+	font-size: var(--fs-sm);
+}
+
+.side-new-hint {
+	padding: 0 6px;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+/* A path breaks at any character; the plus icon stays beside its first line. */
+.project-dir {
+	display: flex;
+	align-items: flex-start;
+	gap: 6px;
+	word-break: break-all;
+}
+.project-dir svg {
+	flex: none;
+	margin-top: 2px;
+}
+
+.side-section {
+	margin-top: 2px;
+	padding-left: 6px;
+}
+
+.side-search {
+	position: relative;
+	display: flex;
+	align-items: center;
+	color: var(--fg-faint);
+}
+.side-search svg {
+	position: absolute;
+	left: 13px;
+	pointer-events: none;
+}
+.side-filter {
+	width: 100%;
+	min-height: 32px;
+	padding-left: 34px;
+	background: var(--bg-inset);
+	border-color: transparent;
+}
+
+/* The list keeps a usable height; when the selector grows taller than the panel the whole panel scrolls. */
+.side-list {
+	display: flex;
+	flex: 1 1 120px;
+	flex-direction: column;
+	gap: 1px;
+	min-height: 120px;
+	margin: 0 -4px;
+	padding: 0;
+	overflow-y: auto;
+	list-style: none;
+}
+
+.side-item {
+	--row-tint: transparent;
+	position: relative;
+	display: flex;
+	align-items: center;
+	border-radius: var(--radius);
+	transition: background-color 120ms;
+}
+.side-item:hover {
+	--row-tint: var(--hover);
+	background: var(--hover);
+}
+/* The open row: a stronger tint inside a full hairline, so it never reads as a hover. */
+.side-item--on,
+.side-item--on:hover {
+	--row-tint: var(--selected);
+	background: var(--selected);
+	box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--fg) 16%, transparent);
+}
+
+.side-pick {
+	display: grid;
+	flex: 1;
+	grid-template-columns: 14px minmax(0, 1fr) auto;
+	column-gap: 8px;
+	row-gap: 1px;
+	align-items: center;
+	min-width: 0;
+	/* The list sits 4px further out than the controls above it: 17px puts the dot in their glyph column. */
+	padding: 7px 8px 7px 17px;
+	border: 0;
+	background: none;
+	text-align: left;
+}
+.side-pick .dot {
+	justify-self: center;
+}
+.side-name {
+	overflow: hidden;
+	font-size: var(--fs-md);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.side-item--on .side-name {
+	font-weight: 500;
+}
+.side-sub {
+	grid-row: 2;
+	grid-column: 2;
+	overflow: hidden;
+	color: var(--fg-faint);
+	font-size: var(--fs-sm);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.side-unread {
+	grid-row: 1;
+	grid-column: 3;
+	justify-self: end;
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--accent);
+}
+
+/* Row actions appear over the row's right end on hover / keyboard focus; the backend pill steps aside for them.
+   Their fade ends in the row's own tint, so the patch does not read as a separate chip. */
+.side-actions {
+	position: absolute;
+	top: 50%;
+	right: 4px;
+	padding-left: 12px;
+	border-radius: var(--radius-sm);
+	background:
+		linear-gradient(to right, transparent, var(--row-tint) 12px),
+		linear-gradient(to right, transparent, var(--bg) 12px);
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(-50%);
+	transition: opacity 120ms;
+}
+.side-item:hover .side-actions,
+.side-item:has(:focus-visible) .side-actions {
+	opacity: 1;
+	pointer-events: auto;
+}
+/* A machine row sits on the environment panel: the fade ends in the panel, then the row's hover tint. */
+.machine-row .side-actions {
+	background:
+		linear-gradient(to right, transparent, var(--hover) 12px),
+		linear-gradient(to right, transparent, var(--bg-inset) 12px),
+		linear-gradient(to right, transparent, var(--bg) 12px);
+}
+@media (hover: hover) {
+	.side-item:hover .side-backend,
+	.side-item:has(:focus-visible) .side-backend {
+		visibility: hidden;
+	}
+}
+
+.side-rename {
+	flex: 1;
+	padding: 4px 6px;
+}
+.side-rename input {
+	width: 100%;
+}
+
+.side-none {
+	padding: 6px 12px;
+	color: var(--fg-faint);
+}
+
+/* Offline machine: the list is the gateway's cached copy, its names muted (never faded: faint text stays legible). */
+.side-item--cached .side-name {
+	color: var(--fg-muted);
+}
+.side-item--cached .dot {
+	opacity: 0.5;
+}
+/* …but a session the gateway holds a copy of can be read, so its name keeps full weight. */
+.side-item--replica .side-name {
+	color: var(--fg);
+}
+.side-replica {
+	margin-left: 6px;
+	padding: 0 5px;
+	border: 1px solid var(--border-strong);
+	border-radius: 999px;
+	color: var(--fg-muted);
+	font-size: var(--fs-xs);
+}
+.side-backend {
+	grid-row: 2;
+	grid-column: 3;
+	justify-self: end;
+	align-self: center;
+	padding: 0 5px;
+	border: 1px solid var(--border-strong);
+	border-radius: 999px;
+	color: var(--fg-faint);
+	font-size: var(--fs-xs);
+	font-weight: 600;
+	line-height: 15px;
+	letter-spacing: 0.02em;
+	white-space: nowrap;
+}
+.side-item[data-replica="partial"] .side-replica {
+	border-style: dashed;
+}
+
+.dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--fg-faint);
+}
+.dot--working {
+	background: var(--warn);
+	box-shadow: 0 0 0 3px color-mix(in oklch, var(--warn) 22%, transparent);
+	animation: pulse 1.6s ease-in-out infinite;
+}
+.dot--idle {
+	background: var(--ok);
+	opacity: 0.6;
+}
+.dot--stored {
+	border: 1px solid var(--fg-faint);
+	background: transparent;
+}
+.dot--closed {
+	background: var(--err);
+}
+/*
+ * Waiting on a human (herdr's "blocked"): red, steady (no pulse, so it does not read as working), with a glyph so the
+ * two kinds tell apart by shape: a solid `?` for an open question, a hollow `!` for a run that ended in an error.
+ */
+.dot--input,
+.dot--error {
+	display: grid;
+	place-items: center;
+	width: 14px;
+	height: 14px;
+	font-family: var(--font-mono);
+	font-size: var(--fs-xs);
+	font-weight: 700;
+	line-height: 1;
+}
+.dot--input {
+	background: var(--err);
+	box-shadow: 0 0 0 3px color-mix(in oklch, var(--err) 22%, transparent);
+	color: var(--bg);
+}
+.dot--input::after {
+	content: "?";
+}
+.dot--error {
+	border: 1.5px solid var(--err);
+	background: color-mix(in oklch, var(--err) 14%, transparent);
+	color: var(--err);
+}
+.dot--error::after {
+	content: "!";
+}
+
+/* The project and worktree chips (a fresh session's status line, the sidebar's project focus). */
+.status-line .chip--button,
+.env .chip--button {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	max-width: 260px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+/* In the sidebar the chip spans the column, like the machine rows above it. */
+.env > .chip-menu {
+	display: flex;
+}
+.env .chip--button {
+	flex: 1;
+	gap: 8px;
+	max-width: none;
+	min-height: 36px;
+	padding: 0 12px;
+	border: 0;
+	border-top: 1px solid var(--border);
+	border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+	font-size: var(--fs-md);
+	color: var(--fg);
+}
+.env > .chip-menu {
+	margin-top: 4px;
+}
+.env .machine-list {
+	overflow: hidden;
+	border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.env .chip--button:hover:not(:disabled) {
+	background: var(--hover);
+}
+/* One project menu in both places: the sidebar's takes the status line's type, so it reads the same. */
+.status-line .chip-pop,
+.env .chip-pop {
+	min-width: 280px;
+}
+.env .chip-pop {
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+}
+
+/* The project menu: projects, session directories to add, a path to add, refresh and remove. */
+.project-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+.chip-group {
+	padding: 6px 8px 2px;
+	color: var(--fg-faint);
+	font-size: var(--fs-xs);
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+.term-nav-hint {
+	padding: 0 6px;
+	color: var(--fg-faint);
+	font-size: var(--fs-sm);
+}
+.project-tools {
+	display: flex;
+	justify-content: flex-end;
+	gap: 2px;
+}
+
+/* ── Session header ── */
+
+.session-head {
+	padding: 8px 12px 8px 16px;
+	border-bottom: 1px solid var(--border);
+}
+.session-headline {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 32px;
+}
+.session-title {
+	min-width: 0;
+	overflow: hidden;
+	font-weight: 600;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.session-ext-title {
+	min-width: 0;
+	overflow: hidden;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.session-tools {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: 6px;
+	margin-left: auto;
+}
+.session-back {
+	display: none;
+}
+
+/* ── Dock toolbar and dock ── */
+
+.dock-toolbar {
+	padding: 2px;
+	border: 1px solid var(--border-strong);
+	border-radius: 999px;
+	background: var(--bg-inset);
+}
+/* With uncommitted changes the Changes tab widens into a pill holding the diff summary beside its glyph.
+   `.icon-btn` in the selector outranks the touch-screen `.icon-btn { width: 40px }` below. */
+.icon-btn.dock-tab--diff {
+	gap: 6px;
+	width: auto;
+	padding: 0 10px 0 6px;
+	border-radius: 999px;
+}
+
+.dock {
+	position: relative;
+	display: flex;
+	flex: none;
+	flex-direction: column;
+	min-width: 320px;
+	/* The sidebar (272px) and 400px of main view stay beside it; dock.tsx clamps the dragged width the same way. */
+	max-width: max(320px, calc(100vw - 672px));
+	min-height: 0;
+	border-left: 1px solid var(--border);
+	background: var(--panel);
+}
+.dock-resize {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: -3px;
+	z-index: 5;
+	width: 6px;
+	cursor: col-resize;
+	touch-action: none;
+}
+.dock-resize:hover,
+.dock-resize:active {
+	background: var(--ring-soft);
+}
+.dock-head {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: 8px;
+	min-height: 44px;
+	padding: 6px 8px 6px 14px;
+	border-bottom: 1px solid var(--border);
+}
+.dock-title {
+	font-size: var(--fs-md);
+	font-weight: 600;
+}
+.dock-head .icon-btn {
+	margin-left: auto;
+}
+.dock-body {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+	overflow: hidden;
+	container-type: inline-size;
+	container-name: dock;
+}
+.dock-body > * {
+	flex: 1;
+	min-height: 0;
+}
+.dock-agents {
+	padding: 8px 10px;
+	overflow-y: auto;
+}
+/* BTW: side questions, topics above and the question box at the bottom. */
+.dock-btw {
+	display: flex;
+	flex-direction: column;
+}
+.btw {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+}
+.btw-topics {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 8px;
+	min-height: 0;
+	padding: 10px;
+	overflow-y: auto;
+}
+.btw-topic {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 10px 12px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-lg);
+	background: var(--bg-raised);
+}
+.btw-topic--on {
+	border-color: color-mix(in oklch, var(--accent) 45%, transparent);
+}
+.btw-turn + .btw-turn {
+	padding-top: 10px;
+	border-top: 1px solid var(--border);
+}
+.btw-question {
+	font-weight: 600;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+.btw-answer {
+	margin-top: 4px;
+	color: var(--fg);
+	font-size: var(--fs-md);
+}
+.btw-status {
+	margin-top: 4px;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+.btw-status--running {
+	color: var(--ok-text);
+}
+.btw-status--error {
+	color: var(--err-text);
+}
+.btw-follow {
+	align-self: flex-start;
+}
+.btw-note {
+	flex: none;
+	padding: 10px 14px;
+	border-top: 1px solid var(--border);
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+.btw-form {
+	display: flex;
+	flex: none;
+	flex-direction: column;
+	gap: 6px;
+	padding: 10px;
+	border-top: 1px solid var(--border);
+}
+.btw-target {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+.btw-target-text {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.btw-input {
+	width: 100%;
+	resize: vertical;
+}
+.btw-actions {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.dock-empty {
+	flex: none;
+	margin: auto;
+	padding: 24px;
+	color: var(--fg-muted);
+	text-align: center;
+}
+
+/* Touch screens: a row's actions belong to its active row only (the open one; on a phone the one just left), so the
+   list is not a wall of pencils. */
+@media (hover: none) {
+	.side-list .side-actions,
+	.machine-list .side-actions {
+		position: static;
+		display: none;
+		padding-left: 0;
+		background: none;
+		opacity: 1;
+		pointer-events: auto;
+		transform: none;
+	}
+	.side-list .side-item--on .side-actions,
+	.side-list .side-item--recent .side-actions,
+	.machine-list .machine-row:has(.machine-item--on) .side-actions {
+		display: flex;
+	}
+}
+@media (pointer: coarse) {
+	.icon-btn {
+		width: 40px;
+		height: 40px;
+	}
+	.btn {
+		min-height: 40px;
+	}
+	.side-pick {
+		min-height: 48px;
+	}
+	.dock-resize {
+		display: none;
+	}
+}
+
+/* Phone layout: one pane at a time. The session list is the home view; a session (or the dock) replaces it. */
+@media (max-width: 720px) {
+	.app {
+		flex-direction: column;
+	}
+	.side {
+		flex: 1;
+		width: auto;
+		padding: 10px 12px 12px;
+		border-right: 0;
+	}
+	.app--session .side,
+	.app:not(.app--session) .app-empty,
+	.app:not(.app--session) .app-bar {
+		display: none;
+	}
+	/* List view: only the connection banners from .app-main, above the list. */
+	.app:not(.app--session) .app-main {
+		flex: none;
+		order: -1;
+	}
+	.app--session .app-main {
+		flex: 1;
+	}
+	.dock {
+		position: fixed;
+		inset: 0;
+		z-index: 40;
+		width: auto !important;
+		min-width: 0;
+		max-width: none;
+		padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+			env(safe-area-inset-left);
+		border-left: 0;
+	}
+	.session-back {
+		display: inline-flex;
+	}
+	/* Back and the toolbar share the first line; the title takes the full width of the second. */
+	.session-head {
+		padding: 4px 12px 6px;
+	}
+	.session-headline {
+		flex-wrap: wrap;
+		row-gap: 0;
+	}
+	.session-tools {
+		order: 1;
+	}
+	.session-title {
+		order: 2;
+		flex: 1 0 100%;
+		font-size: var(--fs-lg);
+	}
+	.session-ext-title {
+		display: none;
+	}
+	.session-head .session-meta {
+		row-gap: 4px;
+		margin-top: 2px;
+	}
+	.session-head .btn--small {
+		min-height: 32px;
+	}
+	/* No session open (Accounts): only the panels that work without one stay beside the usage pill. */
+	.app-bar .dock-tab:disabled {
+		display: none;
+	}
+	.app-bar .dock-toolbar:not(:has(.dock-tab:not(:disabled))) {
+		display: none;
+	}
+	/* iOS zooms on focus below 16px. */
+	.side-filter {
+		font-size: var(--fs-lg);
+	}
+}

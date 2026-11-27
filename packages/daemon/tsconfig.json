@@ -1,0 +1,16 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"include": ["src", "test", "scripts"],
+	"compilerOptions": {
+		// Typechecking RpcClient walks into upstream coding-agent sources, which import
+		// .md/.py/... as text. Upstream declares those in types/assets.
+		"types": ["bun", "assets"],
+		"typeRoots": ["../../vendor/oh-my-pi/types", "../../node_modules/@types"],
+		// The xterm packages' typings pull in the DOM lib; the daemon uses a narrow declaration of the headless parts instead.
+		"paths": {
+			"@xterm/headless": ["./src/xterm/headless.d.ts"],
+			"@xterm/addon-serialize": ["./src/xterm/addon-serialize.d.ts"],
+			"@xterm/addon-unicode11": ["./src/xterm/addon-unicode11.d.ts"]
+		}
+	}
+}

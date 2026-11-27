@@ -1,0 +1,95 @@
+/* Login page only; tokens and base come from upstream's stylesheets, the same ones the app uses. */
+.login {
+	min-height: 100%;
+	display: grid;
+	place-items: center;
+	padding: calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right))
+		calc(16px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+}
+
+.login-card {
+	width: 100%;
+	max-width: 380px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 32px 28px 28px;
+	background: var(--panel);
+	border: 1px solid var(--border-strong);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-card);
+}
+
+/* The product mark and wordmark, set apart from the form by a hairline. */
+.login-brand {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 0 0 8px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid var(--border);
+}
+.login-mark {
+	flex: none;
+	width: 32px;
+	height: 32px;
+	border-radius: var(--radius-sm);
+}
+.login-title {
+	font-family: var(--font-mono);
+	font-size: var(--fs-xl);
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	color: var(--fg);
+}
+
+.login-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	font-size: var(--fs-sm);
+	color: var(--fg-muted);
+}
+
+.login-field input {
+	width: 100%;
+	background: var(--bg-inset);
+	border: 1px solid var(--border-strong);
+	border-radius: 999px;
+	padding: 10px 14px;
+	color: var(--fg);
+	/* iOS zooms on focus below 16px. */
+	font-size: var(--fs-lg);
+}
+.login-field input:focus-visible {
+	outline: 2px solid var(--ring);
+	outline-offset: 1px;
+}
+
+.login-submit {
+	min-height: 40px;
+	background: var(--accent-b);
+	color: var(--accent-fg);
+	border: 1px solid transparent;
+	border-radius: 999px;
+	padding: 8px 14px;
+	font-size: var(--fs-base);
+	font-weight: 500;
+}
+.login-submit:focus-visible {
+	outline: 2px solid var(--ring);
+	outline-offset: 2px;
+}
+.login-submit:disabled {
+	opacity: 0.45;
+	cursor: default;
+}
+
+.login-error {
+	margin: 0;
+	color: var(--err-text);
+	font-size: var(--fs-sm);
+}
+.login-error[hidden] {
+	display: none;
+}

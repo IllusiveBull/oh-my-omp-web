@@ -1,0 +1,7 @@
+telemetry = false
+
+[install]
+# Same as upstream: hoisted layout, exact versions, text lockfile.
+linker = "hoisted"
+exact = true
+saveTextLockfile = true

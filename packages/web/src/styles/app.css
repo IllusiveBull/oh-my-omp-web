@@ -1,0 +1,1378 @@
+input,
+textarea {
+	background: var(--bg-inset);
+	border: 1px solid var(--border-strong);
+	padding: 6px 12px;
+	outline: none;
+}
+/* Listed with :focus-visible so base.css's 4px focus radius does not square them off. */
+input:not([type="checkbox"]):not([type="radio"]),
+input:not([type="checkbox"]):not([type="radio"]):focus-visible {
+	border-radius: 999px;
+}
+textarea,
+textarea:focus-visible {
+	border-radius: var(--radius-lg);
+}
+input:focus,
+textarea:focus {
+	border-color: var(--ring);
+	box-shadow: 0 0 0 3px var(--ring-soft);
+}
+
+.faint {
+	color: var(--fg-muted);
+}
+
+.form-error {
+	color: var(--err-text);
+	font-size: var(--fs-sm);
+}
+
+.session {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+}
+
+.session-body {
+	display: flex;
+	flex: 1;
+	min-height: 0;
+}
+.session-main {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-width: 0;
+	min-height: 0;
+}
+
+.session-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+	font-family: var(--font-mono);
+}
+
+.chip {
+	border: 1px solid var(--border-strong);
+	border-radius: 999px;
+	padding: 0 8px;
+	font-size: var(--fs-xs);
+}
+.chip--live {
+	border-color: var(--live);
+	color: var(--ok-text);
+}
+.chip--button {
+	background: none;
+	color: inherit;
+	font-family: inherit;
+	cursor: pointer;
+	transition: background-color 120ms;
+}
+.chip--button:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+.chip--button:hover:not(:disabled) {
+	background: var(--selected);
+}
+.chip--backend {
+	border-color: color-mix(in srgb, var(--accent) 50%, var(--border-strong));
+	background: color-mix(in srgb, var(--accent) 12%, transparent);
+	color: var(--accent);
+	font-weight: 600;
+}
+.status-backend-btn {
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	font-family: var(--font-mono, inherit);
+	font-weight: 600;
+	transition:
+		background-color 120ms,
+		border-color 120ms,
+		color 120ms;
+}
+.status-backend-btn:hover {
+	background: var(--selected);
+}
+.status-backend-btn--agy {
+	border-color: color-mix(in srgb, var(--accent) 55%, var(--border-strong));
+	background: color-mix(in srgb, var(--accent) 14%, transparent);
+	color: var(--accent);
+}
+.status-backend-btn--switching {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	cursor: progress;
+}
+.status-backend-btn--switching svg {
+	width: 12px;
+	height: 12px;
+	animation: handoff-spin 1s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+	.status-backend-btn--switching svg {
+		animation: none;
+	}
+}
+.ui-request-wrap {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+.ui-perm-bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	padding: 0 4px;
+	font-size: var(--fs-sm);
+}
+
+/* chip-menu.tsx pins the popover to the viewport (the --pop-* properties), so a scrolling ancestor cannot clip it. */
+.chip-pop {
+	position: fixed;
+	top: var(--pop-top);
+	left: var(--pop-left);
+	z-index: 30;
+	min-width: 200px;
+	max-width: min(420px, 90vw);
+	max-height: var(--pop-max-h);
+	overflow-y: auto;
+	padding: 4px;
+	background: var(--bg-raised);
+	border: 1px solid var(--border-strong);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-overlay);
+}
+.chip-list {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	max-height: 280px;
+	overflow-y: auto;
+}
+.chip-filter {
+	width: 100%;
+	margin-bottom: 4px;
+}
+.chip-option {
+	background: none;
+	border: 0;
+	border-radius: var(--radius);
+	padding: 4px 8px;
+	text-align: left;
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+	color: inherit;
+	cursor: pointer;
+}
+.chip-option:hover {
+	background: var(--selected);
+}
+.chip-option[aria-selected="true"] {
+	color: var(--accent);
+}
+.chip-option:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+/* What a menu acts on (a goal's objective, a loop's prompt), above its actions. */
+.chip-note {
+	max-width: 40ch;
+	padding: 4px 8px 6px;
+	font-size: var(--fs-sm);
+	color: var(--fg-muted);
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+.chip-pop--up {
+	top: auto;
+	bottom: var(--pop-bottom);
+}
+.chip-scrim {
+	display: none;
+}
+
+.session-transcript {
+	position: relative;
+	flex: 1;
+	min-height: 0;
+}
+/* Back to the latest message: shown while the reader is above the tail and something new arrived below. */
+.transcript-jump {
+	position: absolute;
+	right: 16px;
+	bottom: 12px;
+	z-index: 1;
+	width: 36px;
+	height: 36px;
+	border: 1px solid var(--border);
+	background: var(--panel);
+	color: var(--fg);
+	box-shadow: 0 2px 8px rgb(0 0 0 / 0.18);
+}
+/* `--selected` is translucent: the transcript would show through. */
+.transcript-jump:hover:not(:disabled) {
+	background: var(--panel);
+	border-color: var(--fg-faint);
+}
+/* Upstream keeps CJK runs unbroken (`word-break: keep-all`) and relies on `overflow-wrap: break-word` for emergency breaks,
+ * but that does not lower min-content: a custom message (shrink-to-fit `.tr-custom`) with one long CJK line or URL grew to
+ * ~2000 px and was clipped at a 390 px viewport. `anywhere` does lower it; the bounds keep the block (and a `pre` inside it,
+ * whose min-content is its longest line) inside its row so the code block scrolls instead. */
+.tr-md {
+	overflow-wrap: anywhere;
+}
+.tr-custom,
+.tr-custom > .tr-md {
+	max-width: 100%;
+}
+
+/* User prompts read like a chat app: a tinted bubble on the right. The gutter's `host` label goes (the side already says
+ * who spoke); a guest's name badge stays, above the bubble. `.tr-root` outranks upstream's `.tr-row--user` rules. */
+.tr-root .tr-row--user {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 2px;
+}
+.tr-root .tr-row--user .tr-gutter {
+	padding-top: 0;
+	text-align: right;
+}
+.tr-root .tr-row--user .tr-gutter:not(:has(.tr-badge)) {
+	display: none;
+}
+.tr-root .tr-row--user .tr-body {
+	max-width: min(80%, 760px);
+	padding: 9px 14px;
+	color: var(--fg);
+	background: var(--bg-raised);
+	border: 1px solid var(--border-strong);
+	border-radius: var(--radius-lg) var(--radius-lg) var(--radius-xs) var(--radius-lg);
+	box-shadow: none;
+}
+@media (max-width: 640px) {
+	.tr-root .tr-row--user .tr-body {
+		max-width: 90%;
+	}
+}
+
+/* The sub-agent drawer's "load earlier" pill sits above its transcript, which takes the rest of the body. */
+.ag-drawer-body > .tr-root {
+	flex: 1;
+	height: auto;
+	min-height: 0;
+}
+.ag-drawer-body > .ag-load-earlier {
+	flex: none;
+	margin: 0 auto 8px;
+}
+
+.banner {
+	padding: 6px 16px;
+	font-size: var(--fs-sm);
+}
+.banner--warn {
+	background: color-mix(in srgb, var(--warn) 14%, transparent);
+}
+.banner--info {
+	background: var(--ring-soft);
+}
+.banner--err {
+	background: color-mix(in srgb, var(--err) 14%, transparent);
+}
+/* Multi-line text (an exit reason with omp's stderr tail): keep its lines, scroll a long one. */
+.banner--pre {
+	white-space: pre-wrap;
+	max-height: 10em;
+	overflow: auto;
+}
+
+.takeover {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 8px;
+	align-items: center;
+	min-height: 44px;
+	padding: 6px 16px;
+	font-size: var(--fs-sm);
+	background: var(--ring-soft);
+}
+/* One row: the sentence takes what the button leaves and stops at two lines (its title has the whole of it). A
+ * confirmation is something to read in full, so it never clamps. */
+.takeover-text {
+	flex: 1 1 14em;
+	min-width: 0;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	overflow: hidden;
+}
+.takeover-text--full {
+	display: block;
+}
+.takeover .btn {
+	flex: none;
+}
+.takeover .form-error {
+	flex-basis: 100%;
+}
+
+.notices {
+	list-style: none;
+	padding: 4px 16px 0;
+	font-size: var(--fs-sm);
+	/* Slash-command output and omp's own notices can be long; the list scrolls instead of pushing the composer away. */
+	max-height: 7.5em;
+	overflow-y: auto;
+}
+.notice {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+.notice--error {
+	color: var(--err-text);
+}
+.notice--warning {
+	color: var(--warn-text);
+}
+.notice--info {
+	color: var(--fg-muted);
+}
+
+.todos,
+.queue,
+.ext-widgets,
+.attention {
+	border-top: 1px solid var(--border);
+	padding: 6px 16px;
+	font-size: var(--fs-sm);
+}
+.todos {
+	max-height: 30vh;
+	overflow-y: auto;
+}
+.todos-head {
+	/* A ghost button: pulled left so its label lines up with the rows below. */
+	margin-left: -9px;
+	font-weight: 600;
+	color: var(--fg);
+}
+.todos-chev {
+	transition: transform 120ms;
+}
+.todos-chev--open {
+	transform: rotate(90deg);
+}
+/* The list reads like upstream's `todo` tool card board: mono rows, small-caps phase heads, coloured status glyphs. */
+.todos-phase {
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+	line-height: 1.6;
+}
+.todos-phase-name {
+	margin-top: 6px;
+	font-size: var(--fs-xs);
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--fg-muted);
+}
+.todos-phase ul {
+	margin: 2px 0 0;
+}
+.todos ul,
+.queue ul {
+	list-style: none;
+	padding: 0;
+}
+.todo {
+	display: flex;
+	gap: 7px;
+	color: var(--fg);
+}
+.todo-icon {
+	width: 12px;
+	flex: none;
+	text-align: center;
+	color: var(--fg-faint);
+}
+.todo--in_progress .todo-icon {
+	color: var(--accent);
+}
+.todo--completed .todo-icon {
+	color: var(--ok);
+}
+.todo--completed,
+.todo--abandoned {
+	color: var(--fg-faint);
+}
+.todo--abandoned .todo-text {
+	text-decoration: line-through;
+}
+
+.queue-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+.queue-item .chip {
+	flex: none;
+}
+.queue-text {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ext-widget {
+	margin: 0;
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+.ext-widget + .ext-widget {
+	margin-top: 6px;
+}
+
+.attention {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	background: var(--ring-soft);
+}
+.attention-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+.attention-text {
+	flex: 1;
+	min-width: 12em;
+	overflow-wrap: anywhere;
+}
+.attention-note {
+	color: var(--fg-muted);
+}
+
+.slash-menu {
+	list-style: none;
+	padding: 4px;
+	max-height: 220px;
+	overflow-y: auto;
+	background: var(--bg-raised);
+	border: 1px solid var(--border-strong);
+	border-radius: var(--radius-lg);
+}
+.slash-item {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2px 12px;
+	padding: 4px 8px;
+	border-radius: var(--radius);
+	cursor: pointer;
+}
+.slash-item--on {
+	background: var(--selected);
+}
+.slash-name {
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+}
+.slash-desc {
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+
+.composer,
+.uireq {
+	border-top: 1px solid var(--border);
+	padding: 10px 16px 14px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+.composer-row {
+	display: flex;
+	gap: 8px;
+	/* Equal heights at one row; a taller input keeps the buttons at its bottom. */
+	align-items: flex-end;
+}
+.composer-input {
+	flex: 1;
+	/* One 18px line + 2×6px padding + borders = 32px, the height of "+" and the buttons; grows with the text.
+	   Half that as its radius: a pill at one line, a rounded box as it grows. */
+	min-height: 32px;
+	max-height: 40vh;
+	padding: 6px 14px;
+	line-height: 18px;
+	resize: none;
+	font-family: var(--font-ui);
+}
+.composer-input,
+.composer-input:focus-visible {
+	border-radius: var(--radius-lg);
+}
+.composer-input::placeholder {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.composer-actions .btn {
+	min-height: 32px;
+}
+/* Send (Steer / Queue while a turn runs, switched by the arrows beside it), then Stop: always there, so nothing moves. */
+.composer-actions {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+.send-split {
+	display: flex;
+}
+.send-split .btn:first-child {
+	/* One width for Send, Steer and Queue. */
+	width: 88px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.send-split .send-mode {
+	padding: 0 6px;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	border-left: 1px solid color-mix(in oklch, var(--accent-fg) 30%, transparent);
+}
+/* "+": photos and files, left of the input. */
+.composer-add {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: 1px solid var(--border-strong);
+	border-radius: 50%;
+	background: var(--bg-raised);
+	color: var(--fg-muted);
+	cursor: pointer;
+	transition:
+		background-color 120ms,
+		color 120ms;
+}
+.composer-add:hover:not(:disabled),
+.composer-add[aria-expanded="true"] {
+	background: var(--selected);
+	color: var(--fg);
+}
+.composer-add:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+.composer-add-option {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 8px;
+	font-family: var(--font-ui);
+	font-size: var(--fs-md);
+}
+/* omp's large-paste choice: a wrapped block, a [Paste #N] marker, or the text as it is. */
+.paste-menu {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 8px;
+	border: 1px solid var(--border-strong);
+	border-radius: var(--radius-lg);
+	background: var(--bg-raised);
+}
+.paste-menu-title {
+	margin-right: auto;
+	color: var(--fg-muted);
+	font-size: var(--fs-sm);
+}
+
+.uireq-title {
+	font-weight: 600;
+}
+.uireq-options,
+.uireq-foot {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+.uireq-q {
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	padding: 8px 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.uireq-opt {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	cursor: pointer;
+	padding: 2px 6px;
+	margin: 0 -6px;
+	border-radius: var(--radius);
+}
+.uireq-opt:has(input:checked) {
+	background: var(--accent-muted);
+	font-weight: 600;
+}
+.uireq-input {
+	width: 100%;
+}
+
+.session-cwd {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.session-transcript {
+	overflow-x: hidden;
+}
+/* Every tool card: the tool name in the accent, a divider after it. */
+.tv-head > .tv-name {
+	color: var(--tv-accent);
+}
+.tv-head > .tv-name::after {
+	content: "";
+	display: inline-block;
+	width: 1px;
+	height: 0.95em;
+	margin-left: 8px;
+	vertical-align: -0.15em;
+	background: var(--tv-faint);
+	opacity: 0.6;
+}
+/* omp's tool cards carry the model's intent (`i`) only as the header tooltip: lift it to the card's title line as
+ * `name │ intent`, the summary beneath it as a muted prompt line. Dot and chevron stay on the title line. */
+.tv-head[title] {
+	display: grid;
+	grid-template-columns: auto auto minmax(0, 1fr) auto;
+	align-items: center;
+	column-gap: 8px;
+	row-gap: 2px;
+}
+.tv-head[title]::before {
+	content: attr(title);
+	grid-row: 1;
+	grid-column: 3;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--tv-fg);
+	font-weight: 600;
+}
+.tv-head[title] > .tv-status,
+.tv-head[title] > .tv-spin {
+	grid-row: 1;
+	grid-column: 1;
+}
+.tv-head[title] > .tv-name {
+	grid-row: 1;
+	grid-column: 2;
+}
+.tv-head[title] > .tv-chev {
+	grid-row: 1;
+	grid-column: 4;
+}
+.tv-head[title] > .tv-sum {
+	grid-row: 2;
+	grid-column: 2 / 4;
+	font-size: var(--fs-sm);
+	color: var(--fg-muted);
+}
+.tv-head[title] > .tv-sum::before {
+	content: "";
+	display: inline-block;
+	width: 0.4em;
+	height: 0.4em;
+	margin-right: 0.7em;
+	vertical-align: 0.05em;
+	border-top: 1.5px solid var(--tv-accent);
+	border-right: 1.5px solid var(--tv-accent);
+	transform: rotate(45deg);
+}
+/* Message times (see transcript-times.ts): the local time at the bottom right of each message, as in Telegram. */
+.tr-row--user > .tr-body[data-time]::after,
+.tr-row--assistant > .tr-body[data-time]::after,
+.tr-row--custom > .tr-body[data-time]::after {
+	content: attr(data-time);
+	align-self: flex-end;
+	margin-top: -2px;
+	font-size: var(--fs-xs);
+	line-height: 1.2;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+	color: var(--fg-faint);
+	user-select: none;
+}
+/* Already the title: the body's italic intent line would repeat it. */
+.tv-intent {
+	display: none;
+}
+
+/* Phone layout (see shell.css for the panes): the session view's parts. */
+@media (max-width: 720px) {
+	.session-meta {
+		min-width: 0;
+		/* The dock toolbar beside the title is taller than the headline on touch screens: keep the chips off it. */
+		margin-top: 8px;
+	}
+	.session-meta .chip,
+	.session-meta .chip-menu > button {
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.btn--small {
+		min-height: 40px;
+	}
+	.chip--button {
+		min-height: 32px;
+	}
+	.chip-pop {
+		left: calc(12px + env(safe-area-inset-left));
+		right: calc(12px + env(safe-area-inset-right));
+		top: auto;
+		bottom: calc(12px + env(safe-area-inset-bottom));
+		max-width: none;
+		max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+	}
+	.chip-scrim {
+		display: block;
+		position: fixed;
+		inset: 0;
+		z-index: 29;
+		background: oklch(0.15 0.01 260 / 0.32);
+	}
+	.chip-list {
+		max-height: 50dvh;
+	}
+	.chip-option {
+		min-height: 40px;
+	}
+
+	.banner,
+	.takeover,
+	.notices,
+	.todos,
+	.queue,
+	.ext-widgets,
+	.attention {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+	.todos {
+		max-height: 20dvh;
+	}
+	.queue ul {
+		max-height: 12dvh;
+		overflow-y: auto;
+	}
+	.ext-widgets {
+		max-height: 12dvh;
+		overflow-y: auto;
+	}
+	.attention {
+		max-height: 25dvh;
+		overflow-y: auto;
+	}
+	.notices {
+		max-height: 5em;
+	}
+	.queue-x {
+		width: 40px;
+		height: 40px;
+	}
+
+	.composer,
+	.uireq {
+		padding: 8px 12px 10px;
+		max-height: 45dvh;
+		overflow-y: auto;
+	}
+	.composer-input {
+		min-height: 40px;
+		max-height: 30dvh;
+		padding: 10px 14px;
+	}
+	.composer-actions .btn {
+		min-height: 40px;
+		min-width: 40px;
+		justify-content: center;
+	}
+	.composer-actions .send-mode {
+		min-width: 28px;
+	}
+	/* Icons only, so the input keeps its width on a phone. */
+	.composer-actions .btn-label {
+		display: none;
+	}
+	.send-split .btn:first-child {
+		width: 44px;
+	}
+	.composer-add {
+		width: 40px;
+		height: 40px;
+	}
+	.slash-menu {
+		max-height: 30dvh;
+	}
+	.slash-name {
+		min-width: 0;
+		overflow-wrap: anywhere;
+	}
+	.slash-item {
+		min-height: 40px;
+		align-items: center;
+	}
+
+	/* iOS zooms on focus below 16px. */
+	input,
+	textarea {
+		font-size: var(--fs-lg);
+	}
+}
+
+/* The model chip's way to the model hub, below its model list: a row like the models (same rounded hover), set off
+ * by a rule above it rather than a border of its own, which would square the hover. */
+.chip-option--action {
+	position: relative;
+	display: block;
+	width: 100%;
+	margin-top: 9px;
+	font-family: inherit;
+	color: var(--fg-muted);
+}
+.chip-option--action::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: -5px;
+	border-top: 1px solid var(--border);
+}
+
+/* Model hub (`/model`): omp's model roles and their assignments. */
+.model-roles {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.model-role {
+	border-bottom: 1px solid var(--border);
+	padding: 6px 0;
+}
+.model-role-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 10px;
+}
+.model-role-name {
+	flex: 0 0 150px;
+	font-weight: 600;
+}
+.model-role-cycle {
+	margin-left: 6px;
+	font-weight: 400;
+}
+.model-role-selector {
+	flex: 1 1 200px;
+	min-width: 0;
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+	overflow-wrap: anywhere;
+}
+.model-role-actions {
+	display: flex;
+	gap: 6px;
+}
+.model-role-editor {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-top: 8px;
+}
+.model-role-models {
+	max-height: 240px;
+}
+.model-role-save {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+.model-hub-warning {
+	color: var(--warn-text);
+}
+.model-hub .mono {
+	font-family: var(--font-mono);
+}
+
+/* Images attached to the draft; each is an [Image #N] marker in the text. */
+.composer-images {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.composer-image {
+	position: relative;
+}
+.composer-image img {
+	display: block;
+	max-width: 120px;
+	max-height: 80px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-sm);
+	object-fit: cover;
+	min-width: 32px;
+	min-height: 32px;
+}
+.composer-image-n {
+	position: absolute;
+	left: 3px;
+	bottom: 3px;
+	padding: 0 4px;
+	border-radius: var(--radius-sm);
+	background: color-mix(in oklch, var(--panel) 80%, transparent);
+	font-family: var(--font-mono);
+	font-size: var(--fs-xs);
+}
+.composer-image-remove {
+	position: absolute;
+	top: -8px;
+	right: -8px;
+	width: 28px;
+	height: 28px;
+	/* Floats over the image corner: needs its own backdrop to stay legible. */
+	border: 1px solid var(--border-strong);
+	border-radius: 50%;
+	background: var(--panel);
+}
+
+/* omp's status line under the composer, with the cycle roles in a menu. */
+.status-line {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 14px;
+	padding: 6px 16px 8px;
+	font-family: var(--font-mono);
+	font-size: var(--fs-sm);
+	line-height: 16px;
+	color: var(--fg-muted);
+	/* A footer of its own: the transcript scrolls under a rule, not into the text. */
+	background: var(--panel);
+	border-top: 1px solid var(--border);
+}
+/*
+ * Every segment, chip or not, is one 24px row: icon, text and meter centred in it. Icons are lucide's (or the drawn
+ * thinking sector) at one size; typed glyphs came from fallback fonts at sizes and baselines of their own.
+ */
+.status-seg,
+.status-line .chip,
+.status-line .chip-menu,
+.status-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	min-width: 0;
+	max-width: 100%;
+}
+.status-seg,
+.status-line .chip {
+	box-sizing: border-box;
+	height: 24px;
+	white-space: nowrap;
+}
+.status-line .chip {
+	font-size: inherit;
+	line-height: inherit;
+}
+.status-line svg.lucide,
+.status-sector svg {
+	flex-shrink: 0;
+	width: 12px;
+	height: 12px;
+}
+.status-sector {
+	display: inline-flex;
+	vertical-align: -1px;
+}
+.status-text {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.status-line .status-model {
+	color: color-mix(in oklch, var(--omp-statusLineModel) 72%, var(--fg));
+}
+.status-line .status-path {
+	color: color-mix(in oklch, var(--omp-statusLinePath) 72%, var(--fg));
+}
+.status-line .status-cost {
+	color: color-mix(in oklch, var(--omp-statusLineCost) 72%, var(--fg));
+}
+/* Context use as a bar before its label, in the level's colour (the segment's `color`). */
+.status-meter {
+	flex-shrink: 0;
+	width: 48px;
+	height: 5px;
+	border-radius: 999px;
+	background: color-mix(in oklch, currentColor 22%, transparent);
+	overflow: hidden;
+}
+.status-meter-fill {
+	display: block;
+	height: 100%;
+	border-radius: inherit;
+	background: currentColor;
+}
+.status-line-dim {
+	color: var(--fg-faint);
+}
+.status-role {
+	white-space: nowrap;
+}
+.model-role-thinking {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+}
+.chip--on {
+	border-color: currentColor;
+	font-weight: 600;
+}
+
+/* omp's `/context` overview: the terminal's categories, Tool Output per tool, then buffer and free space. */
+.context-panel {
+	position: fixed;
+	z-index: 40;
+	display: flex;
+	flex-direction: column;
+	width: min(560px, calc(100vw - 16px));
+	background: var(--bg-raised);
+	border: 1px solid var(--border-strong);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-overlay);
+	overflow: auto;
+}
+.context-panel .handoff-body {
+	overflow: visible;
+}
+.context-panel .handoff-head {
+	flex-shrink: 0;
+}
+.context-rows {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.context-row {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(24px, 1fr) 44px 48px;
+	align-items: center;
+	gap: 10px;
+	font-size: var(--fs-sm);
+}
+.context-row--child .context-label {
+	padding-left: 16px;
+	color: var(--fg-muted);
+}
+.context-label {
+	overflow-wrap: anywhere;
+}
+.context-bar {
+	height: 8px;
+	border-radius: 999px;
+	background: var(--selected);
+	overflow: hidden;
+}
+.context-fill {
+	display: block;
+	height: 100%;
+	background: var(--omp-accent);
+}
+.context-num {
+	text-align: right;
+	font-family: var(--font-mono);
+	color: var(--fg-muted);
+}
+.context-notes {
+	margin: 0;
+	font-size: var(--fs-sm);
+	white-space: pre-wrap;
+	color: var(--fg-muted);
+}
+
+/*
+ * omp's terminal theme colours (the machine's `theme.dark` / `theme.light`, resolved by the daemon: `omp.theme`). The
+ * session view carries both palettes as `--omp-dark-*` / `--omp-light-*`; these pick the one matching the page.
+ */
+.session {
+	--omp-accent: var(--omp-dark-accent, var(--accent));
+	--omp-success: var(--omp-dark-success, var(--ok, var(--accent)));
+	--omp-warning: var(--omp-dark-warning, var(--warn));
+	--omp-error: var(--omp-dark-error, var(--err));
+	--omp-muted: var(--omp-dark-muted, var(--fg-muted));
+	--omp-dim: var(--omp-dark-dim, var(--fg-muted));
+	--omp-statusLineSep: var(--omp-dark-statusLineSep, currentColor);
+	--omp-statusLineModel: var(--omp-dark-statusLineModel, currentColor);
+	--omp-statusLinePath: var(--omp-dark-statusLinePath, currentColor);
+	--omp-statusLineGitClean: var(--omp-dark-statusLineGitClean, currentColor);
+	--omp-statusLineGitDirty: var(--omp-dark-statusLineGitDirty, currentColor);
+	--omp-statusLineDirty: var(--omp-dark-statusLineDirty, currentColor);
+	--omp-statusLineStaged: var(--omp-dark-statusLineStaged, currentColor);
+	--omp-statusLineUntracked: var(--omp-dark-statusLineUntracked, currentColor);
+	--omp-statusLineContext: var(--omp-dark-statusLineContext, currentColor);
+	--omp-statusLineCost: var(--omp-dark-statusLineCost, currentColor);
+	--omp-thinkingOff: var(--omp-dark-thinkingOff, currentColor);
+	--omp-thinkingMinimal: var(--omp-dark-thinkingMinimal, currentColor);
+	--omp-thinkingLow: var(--omp-dark-thinkingLow, currentColor);
+	--omp-thinkingMedium: var(--omp-dark-thinkingMedium, currentColor);
+	--omp-thinkingHigh: var(--omp-dark-thinkingHigh, currentColor);
+	--omp-thinkingXhigh: var(--omp-dark-thinkingXhigh, currentColor);
+}
+[data-theme="light"] .session {
+	--omp-accent: var(--omp-light-accent, var(--accent));
+	--omp-success: var(--omp-light-success, var(--ok, var(--accent)));
+	--omp-warning: var(--omp-light-warning, var(--warn));
+	--omp-error: var(--omp-light-error, var(--err));
+	--omp-muted: var(--omp-light-muted, var(--fg-muted));
+	--omp-dim: var(--omp-light-dim, var(--fg-muted));
+	--omp-statusLineSep: var(--omp-light-statusLineSep, currentColor);
+	--omp-statusLineModel: var(--omp-light-statusLineModel, currentColor);
+	--omp-statusLinePath: var(--omp-light-statusLinePath, currentColor);
+	--omp-statusLineGitClean: var(--omp-light-statusLineGitClean, currentColor);
+	--omp-statusLineGitDirty: var(--omp-light-statusLineGitDirty, currentColor);
+	--omp-statusLineDirty: var(--omp-light-statusLineDirty, currentColor);
+	--omp-statusLineStaged: var(--omp-light-statusLineStaged, currentColor);
+	--omp-statusLineUntracked: var(--omp-light-statusLineUntracked, currentColor);
+	--omp-statusLineContext: var(--omp-light-statusLineContext, currentColor);
+	--omp-statusLineCost: var(--omp-light-statusLineCost, currentColor);
+	--omp-thinkingOff: var(--omp-light-thinkingOff, currentColor);
+	--omp-thinkingMinimal: var(--omp-light-thinkingMinimal, currentColor);
+	--omp-thinkingLow: var(--omp-light-thinkingLow, currentColor);
+	--omp-thinkingMedium: var(--omp-light-thinkingMedium, currentColor);
+	--omp-thinkingHigh: var(--omp-light-thinkingHigh, currentColor);
+	--omp-thinkingXhigh: var(--omp-light-thinkingXhigh, currentColor);
+}
+@media (prefers-color-scheme: light) {
+	:root:not([data-theme]) .session {
+		--omp-accent: var(--omp-light-accent, var(--accent));
+		--omp-success: var(--omp-light-success, var(--ok, var(--accent)));
+		--omp-warning: var(--omp-light-warning, var(--warn));
+		--omp-error: var(--omp-light-error, var(--err));
+		--omp-muted: var(--omp-light-muted, var(--fg-muted));
+		--omp-dim: var(--omp-light-dim, var(--fg-muted));
+		--omp-statusLineSep: var(--omp-light-statusLineSep, currentColor);
+		--omp-statusLineModel: var(--omp-light-statusLineModel, currentColor);
+		--omp-statusLinePath: var(--omp-light-statusLinePath, currentColor);
+		--omp-statusLineGitClean: var(--omp-light-statusLineGitClean, currentColor);
+		--omp-statusLineGitDirty: var(--omp-light-statusLineGitDirty, currentColor);
+		--omp-statusLineDirty: var(--omp-light-statusLineDirty, currentColor);
+		--omp-statusLineStaged: var(--omp-light-statusLineStaged, currentColor);
+		--omp-statusLineUntracked: var(--omp-light-statusLineUntracked, currentColor);
+		--omp-statusLineContext: var(--omp-light-statusLineContext, currentColor);
+		--omp-statusLineCost: var(--omp-light-statusLineCost, currentColor);
+		--omp-thinkingOff: var(--omp-light-thinkingOff, currentColor);
+		--omp-thinkingMinimal: var(--omp-light-thinkingMinimal, currentColor);
+		--omp-thinkingLow: var(--omp-light-thinkingLow, currentColor);
+		--omp-thinkingMedium: var(--omp-light-thinkingMedium, currentColor);
+		--omp-thinkingHigh: var(--omp-light-thinkingHigh, currentColor);
+		--omp-thinkingXhigh: var(--omp-light-thinkingXhigh, currentColor);
+	}
+}
+
+/* Transcript image viewer (`ImageViewer`): above every sheet; dark in both themes, like any photo viewer. */
+.imgv {
+	position: fixed;
+	inset: 0;
+	z-index: 60;
+	display: flex;
+	flex-direction: column;
+	padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+	background: oklch(0.12 0 0 / 0.92);
+	color: white;
+}
+.imgv-bar {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 8px 12px;
+}
+.imgv-count {
+	flex: 1;
+	font-size: var(--fs-md);
+	font-variant-numeric: tabular-nums;
+	color: oklch(1 0 0 / 0.8);
+}
+.imgv .icon-btn {
+	width: 36px;
+	height: 36px;
+	color: oklch(1 0 0 / 0.85);
+}
+.imgv .icon-btn:hover:not(:disabled) {
+	background: oklch(1 0 0 / 0.14);
+	color: white;
+}
+.imgv-stage {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 56px 24px;
+	overflow: hidden;
+}
+.imgv-img {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+	border-radius: var(--radius-sm);
+	box-shadow: 0 8px 40px oklch(0 0 0 / 0.5);
+	cursor: zoom-in;
+	user-select: none;
+}
+/* Actual size: the stage scrolls; `margin: auto` centres an image smaller than it without clipping a larger one. */
+.imgv-stage--actual {
+	display: block;
+	overflow: auto;
+}
+.imgv-stage--actual .imgv-img {
+	display: block;
+	max-width: none;
+	max-height: none;
+	margin: auto;
+	cursor: zoom-out;
+}
+.imgv .imgv-nav {
+	position: absolute;
+	top: 50%;
+	width: 44px;
+	height: 44px;
+	transform: translateY(-50%);
+	background: oklch(1 0 0 / 0.08);
+}
+.imgv-nav--prev {
+	left: calc(8px + env(safe-area-inset-left));
+}
+.imgv-nav--next {
+	right: calc(8px + env(safe-area-inset-right));
+}
+@media (max-width: 720px) {
+	.imgv-stage {
+		padding: 0 8px 16px;
+	}
+	.imgv .imgv-nav {
+		top: auto;
+		bottom: calc(16px + env(safe-area-inset-bottom));
+		transform: none;
+	}
+}
+
+/*
+ * The vendored transcript and tool cards (`tr-*`, `tv-*`): readable and on the type scale. Upstream sets sizes of its own
+ * (10px–11.5px) and tints status text with fills that fall short of 4.5:1; its dimmed text is `--fg-faint`, which is AA
+ * since theme.css, as long as nothing fades it further (the summary line above no longer does). The extra class in front
+ * outranks upstream's single-class rules whichever sheet loads last.
+ */
+.tv-card .tv-badge,
+.tv-card .tv-agent-link,
+.tv-card .tv-out-title,
+.tv-card .tv-expand,
+.tv-card .tv-cell-title,
+.tv-card .tv-todo-phase {
+	font-size: var(--fs-xs);
+}
+.tv-card :is(.tv-kv, .tv-pre, .tv-cmd, .tv-diff, .tv-list, .tv-todo, .tv-note, .tv-prose) {
+	font-size: var(--fs-sm);
+}
+.tv-card {
+	border-radius: var(--radius-sm);
+}
+.tv-card .tv-badge,
+.tr-root .tr-md code {
+	border-radius: var(--radius-xs);
+}
+.tv-card .tv-badge--ok,
+.tv-card .tv-ok-text {
+	color: var(--ok-text);
+}
+.tv-card .tv-badge--err,
+.tv-card .tv-err-text {
+	color: var(--err-text);
+}
+.tv-card .tv-badge--warn,
+.tv-card .tv-warn-text {
+	color: var(--warn-text);
+}
+.tv-card .tv-agent-link-arrow {
+	opacity: 1;
+}
+.tr-root .tr-gutter,
+.tr-root .tr-stop-msg,
+.tr-root .tr-shimmer {
+	font-size: var(--fs-sm);
+}
+/* Hit areas: padding the label cancels with a negative margin, so the rows keep their rhythm. */
+button.tr-think-head {
+	padding: 3px 6px;
+	margin: -3px -6px;
+}
+@media (pointer: coarse) {
+	button.tr-think-head {
+		padding: 7px 8px;
+		margin: -7px -8px;
+	}
+	button.tr-earlier {
+		height: 32px;
+	}
+	.tv-card .tv-head {
+		min-height: 32px;
+	}
+	.composer-image-remove {
+		top: -12px;
+		right: -12px;
+		width: 32px;
+		height: 32px;
+	}
+}
