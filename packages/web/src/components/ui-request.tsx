@@ -1,12 +1,13 @@
 import type { AskQuestion, UiRequest, UiResponseBody } from "@omp-web/protocol";
 import { type ReactNode, useState } from "react";
+import { FormRequest } from "./form-request";
 
 interface Props {
 	request: UiRequest;
 	onRespond(response: UiResponseBody): void;
 }
 
-/** Answers one omp `extension_ui_request` (select, confirm, input, editor, ask). */
+/** Answers one omp `extension_ui_request` (select, confirm, input, editor, ask, form). */
 export function UiRequestDialog({ request, onRespond }: Props): ReactNode {
 	const cancel = (): void => onRespond({ cancelled: true });
 	return (
@@ -30,6 +31,7 @@ export function UiRequestDialog({ request, onRespond }: Props): ReactNode {
 				<TextRequest request={request} onRespond={onRespond} />
 			)}
 			{request.method === "ask" && <AskRequest questions={request.questions} onRespond={onRespond} />}
+			{request.method === "form" && <FormRequest html={request.html} onRespond={onRespond} />}
 			<div className="uireq-foot">
 				<button type="button" className="btn btn--ghost" onClick={cancel}>
 					Cancel

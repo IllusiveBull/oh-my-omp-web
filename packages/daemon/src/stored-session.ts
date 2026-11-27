@@ -4,7 +4,7 @@ import { resolveSessionLeafId, type SessionEntry as OmpEntry } from "@oh-my-pi/p
 import { loadEntriesFromFile, resolveBlobRefsInEntries } from "@oh-my-pi/pi-coding-agent/session/session-loader";
 import { migrateToCurrentVersion } from "@oh-my-pi/pi-coding-agent/session/session-migrations";
 import { getBlobsDir } from "@oh-my-pi/pi-utils/dirs";
-import { formatContextUsage, getContextUsageLevel } from "@oh-my-pi/pi-tui/chrome/context-thresholds";
+import { contextLevel, formatContextUsage } from "@oh-my-pi/pi-coding-agent/ui/status/format";
 import {
 	compareBranches,
 	defaultCapabilities,
@@ -162,7 +162,7 @@ export class StoredSession implements SessionHandle {
 						? {
 								contextUsage: {
 									label: formatContextUsage(contextPercent, contextWindow, contextTokens),
-									level: getContextUsageLevel(contextPercent, contextWindow),
+									level: contextLevel(contextPercent, contextWindow),
 									percent: contextPercent,
 								},
 							}

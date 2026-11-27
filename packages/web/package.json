@@ -15,8 +15,8 @@
 	},
 	"dependencies": {
 		"@oh-my-pi/collab-web": "workspace:*",
+		"@oh-my-pi/pi-coding-agent": "workspace:*",
 		"@oh-my-pi/pi-utils": "workspace:*",
-		"@oh-my-pi/pi-tui": "workspace:*",
 		"@oh-my-pi/pi-wire": "workspace:*",
 		"@omp-web/protocol": "workspace:*",
 		"@xterm/addon-fit": "0.11.0",

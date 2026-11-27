@@ -1,5 +1,6 @@
+import { colorHex } from "@oh-my-pi/pi-tui/theme/color";
 import { loadThemeJson } from "@oh-my-pi/pi-tui/theme/loader";
-import { resolveThemeColors, resolveToHex } from "@oh-my-pi/pi-tui/theme/color";
+import { resolveColorValue } from "@oh-my-pi/pi-tui/theme/theme";
 import type { OmpPaletteWire, OmpThemeWire } from "@omp-web/protocol";
 
 /** The theme tokens omp's status line and model hub paint with. */
@@ -30,11 +31,10 @@ const TOKENS = [
 
 async function palette(name: string, light: boolean): Promise<OmpPaletteWire> {
 	const json = await loadThemeJson(name);
-	const colors = resolveThemeColors(json.colors, json.vars ?? {});
 	const out: OmpPaletteWire = { name };
 	for (const token of TOKENS) {
-		const value = colors[token];
-		if (value !== undefined) out[token] = resolveToHex(value, light);
+		const value = json.colors[token];
+		if (value !== undefined) out[token] = colorHex(resolveColorValue(value, json.vars ?? {}), light);
 	}
 	return out;
 }

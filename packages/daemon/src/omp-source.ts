@@ -69,6 +69,20 @@ function isSideChannelFrame(value: unknown): value is SideChannelFrame {
 	return value.type === "session_info_update" || value.type === "config_update";
 }
 
+/**
+ * Hands a tapped frame to each listener. A listener that throws must not end the tap: the tap also carries the responses
+ * of raw commands (`get_entries`, `compact`), which would then all time out while omp keeps running.
+ */
+function deliver<T>(listeners: Iterable<(value: T) => void>, value: T): void {
+	for (const listener of listeners) {
+		try {
+			listener(value);
+		} catch (error) {
+			console.error("omp-webd: omp frame listener failed:", error);
+		}
+	}
+}
+
 /** `compact` summarizes with the model and can run far longer than a normal command. */
 const COMPACT_TIMEOUT_MS = 300_000;
 
@@ -164,8 +178,8 @@ export class OmpRpcSource implements RpcSource {
 				if (!frame) continue;
 				if (isRecord(frame) && frame.type === "ready")
 					this.#ready = { supportedProtocolVersions: frame.supportedProtocolVersions };
-				else if (isUiRequest(frame)) for (const l of this.#uiListeners) l(frame);
-				else if (isSideChannelFrame(frame)) for (const l of this.#sideListeners) l(frame);
+				else if (isUiRequest(frame)) deliver(this.#uiListeners, frame);
+				else if (isSideChannelFrame(frame)) deliver(this.#sideListeners, frame);
 				else if (isRecord(frame) && frame.type === "response" && typeof frame.id === "string") {
 					const waiter = this.#rawWaiters.get(frame.id);
 					if (waiter) {

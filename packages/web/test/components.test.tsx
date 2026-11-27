@@ -610,4 +610,29 @@ describe("UiRequestDialog: ask tool selects", () => {
 		expect(answers).toEqual([{ value: "Coffee" }]);
 		await view.unmount();
 	});
+
+	test("an HTML form submits omp's data shape, Other text included, only once every constraint holds", async () => {
+		const answers: UiResponseBody[] = [];
+		const html = `<form><input type="hidden" name="v" value="1">
+			<fieldset><legend>Database</legend>
+				<label><input type="radio" name="db" value="sqlite" checked> SQLite</label>
+				<label><input type="radio" name="db" value="pg"> Postgres</label>
+			</fieldset>
+			<label>Port <input type="number" name="port" min="1" required></label></form>`;
+		const view = await dom.mount(
+			<UiRequestDialog request={{ id: "f1", method: "form", html }} onRespond={a => answers.push(a)} />,
+		);
+		expect(view.query("legend")?.textContent).toBe("Database");
+		expect(isChecked(view, "SQLite")).toBe(true);
+		await view.click(".uireq-options .btn--primary");
+		expect(answers).toEqual([]);
+		expect(view.query(".uireq-error")?.textContent).toBe("Required");
+
+		await view.type("input[name=port]", "8080");
+		await view.type(".uireq-other .uireq-input", "mysql");
+		expect(isChecked(view, "SQLite")).toBe(false);
+		await view.click(".uireq-options .btn--primary");
+		expect(answers).toEqual([{ data: { v: "1", db: "mysql", port: 8080 } }]);
+		await view.unmount();
+	});
 });

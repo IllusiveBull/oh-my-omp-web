@@ -4,7 +4,7 @@ import type { RpcSessionState } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-ty
 import type { ImageContent } from "@oh-my-pi/pi-ai";
 import { getNextTimeBasedPricingTransition, getTimeBasedPricingPeriod } from "@oh-my-pi/pi-catalog/models";
 import type { ModelCost } from "@oh-my-pi/pi-catalog/types";
-import { formatContextUsage, getContextUsageLevel } from "@oh-my-pi/pi-tui/chrome/context-thresholds";
+import { contextLevel, formatContextUsage } from "@oh-my-pi/pi-coding-agent/ui/status/format";
 import type { AgentEvent } from "@oh-my-pi/pi-wire";
 import {
 	activeBranchIds,
@@ -746,7 +746,7 @@ export class HostedSession implements SessionHandle {
 			contextUsage: usage
 				? {
 						label: formatContextUsage(usage.percent, usage.contextWindow, usage.tokens),
-						level: getContextUsageLevel(usage.percent, usage.contextWindow),
+						level: contextLevel(usage.percent, usage.contextWindow),
 						...(Number.isFinite(usage.percent) && usage.contextWindow > 0 ? { percent: usage.percent } : {}),
 					}
 				: undefined,
@@ -943,6 +943,15 @@ export class HostedSession implements SessionHandle {
 					url: mapped.url,
 					launchUrl: mapped.launchUrl,
 					instructions: mapped.instructions,
+				});
+				break;
+			case "unsupported":
+				// omp may be waiting on it (a dialog method newer than this daemon): answer it so the turn does not hang.
+				this.#source.respondUi({ type: "extension_ui_response", id: mapped.id, cancelled: true });
+				this.#emit({
+					k: "notify",
+					level: "warning",
+					message: `omp asked for "${mapped.method}", which omp-web cannot show; it was cancelled.`,
 				});
 				break;
 		}

@@ -1,5 +1,5 @@
 import type { ModelOption } from "@omp-web/protocol";
-import { FuzzyCorpus } from "@oh-my-pi/pi-tui/fuzzy";
+import { FuzzyQuery, FuzzyText } from "@oh-my-pi/pi-coding-agent/utils/fuzzy";
 
 /**
  * omp's model search (`modelSearchText` / `ModelItemRanker` of the terminal UI's model browser), over the models the
@@ -124,12 +124,12 @@ function buildAffinity(
  */
 export class ModelSearch {
 	readonly models: readonly ModelOption[];
-	readonly #corpus: FuzzyCorpus<ModelOption>;
+	readonly #texts: readonly FuzzyText[];
 	readonly #keys = new Map<ModelOption, RankKeys>();
 
 	constructor(models: readonly ModelOption[], options: ModelSearchOptions = {}) {
 		this.models = models;
-		this.#corpus = new FuzzyCorpus(models, modelSearchText);
+		this.#texts = models.map(model => new FuzzyText(modelSearchText(model)));
 		const affinity = buildAffinity(options.roleModels ?? [], options.currentModel);
 		const ordered = [...models].sort(compareModels);
 		let group = 0;
@@ -150,7 +150,13 @@ export class ModelSearch {
 	rank(query: string): ModelOption[] {
 		if (!query.trim()) return [...this.models];
 		const queryKey = compactModelSearchText(query);
-		const rows = this.#corpus.rank(query).map((result, fuzzyIndex) => {
+		const fuzzy = new FuzzyQuery(query);
+		const matches = this.models.flatMap((model, i) => {
+			const match = fuzzy.match(this.#texts[i]!);
+			return match.matches ? [{ item: model, score: match.score }] : [];
+		});
+		matches.sort((a, b) => a.score - b.score);
+		const rows = matches.map((result, fuzzyIndex) => {
 			const keys = this.#keys.get(result.item)!;
 			return {
 				model: result.item,
