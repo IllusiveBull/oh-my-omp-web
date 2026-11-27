@@ -653,6 +653,62 @@ textarea:focus {
 .uireq-input {
 	width: 100%;
 }
+/* omp's `form` dialog (the ask tool) can be long: it scrolls, Submit and Cancel stay in view. */
+.uireq-form {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-height: 60vh;
+	overflow-y: auto;
+}
+.uireq-section,
+.uireq-field,
+.uireq-choice,
+.uireq-text-field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.uireq-text {
+	white-space: pre-wrap;
+	margin: 0;
+}
+ul.uireq-text,
+ol.uireq-text {
+	padding-left: 20px;
+}
+.uireq-pre {
+	margin: 0;
+	padding: 6px 8px;
+	overflow-x: auto;
+	background: var(--bg-raised);
+	border-radius: var(--radius);
+	font-size: var(--fs-sm);
+}
+.uireq-table {
+	border-collapse: collapse;
+	font-size: var(--fs-sm);
+}
+.uireq-table th,
+.uireq-table td {
+	border: 1px solid var(--border);
+	padding: 3px 8px;
+	text-align: left;
+	vertical-align: top;
+}
+.uireq-img {
+	max-width: 100%;
+	max-height: 320px;
+	object-fit: contain;
+	align-self: flex-start;
+}
+.uireq-other .uireq-input {
+	flex: 1;
+}
+.uireq-error {
+	color: var(--err-text);
+	font-size: var(--fs-sm);
+}
 
 .session-cwd {
 	min-width: 0;

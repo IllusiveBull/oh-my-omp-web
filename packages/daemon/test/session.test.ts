@@ -258,6 +258,32 @@ describe("HostedSession initial state and control", () => {
 		});
 	});
 
+	test("form requests reach clients whole and their data goes back to omp", async () => {
+		const { source, session } = await hosted();
+		const html = '<form><label><input type="radio" name="db" value="pg"> Postgres</label></form>';
+		source.emitUi({ type: "extension_ui_request", id: "f1", method: "form", html, timeout: 5000 });
+		const snap = session.subscribe(() => {}, 0, undefined).result;
+		expect(snap.kind === "snapshot" && snap.snapshot.uiRequests).toEqual([
+			{ id: "f1", method: "form", html, timeout: 5000 },
+		]);
+		session.respondUi("f1", { data: { db: "pg", tags: ["a", "b"], n: 3 } });
+		expect(source.uiResponses).toEqual([
+			{ type: "extension_ui_response", id: "f1", data: { db: "pg", tags: ["a", "b"], n: 3 } },
+		]);
+	});
+
+	test("a dialog method the daemon does not know is cancelled instead of left waiting", async () => {
+		const { source, session } = await hosted();
+		source.emitUi({ type: "extension_ui_request", id: "x1", method: "hologram", spec: {} } as never);
+		expect(source.uiResponses).toEqual([{ type: "extension_ui_response", id: "x1", cancelled: true }]);
+		const snap = session.subscribe(() => {}, 0, undefined).result;
+		if (snap.kind !== "snapshot") throw new Error("expected snapshot");
+		expect(snap.snapshot.uiRequests).toEqual([]);
+		expect(snap.snapshot.notices.map(n => n.message)).toEqual([
+			'omp asked for "hologram", which omp-web cannot show; it was cancelled.',
+		]);
+	});
+
 	test("failed prompt surfaces as a prompt_result event; process exit closes the session and rejects commands", async () => {
 		const { source, session } = await hosted();
 		const seen: SessionEvent[] = [];

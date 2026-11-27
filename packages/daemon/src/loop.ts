@@ -7,7 +7,10 @@ import {
 	parseLoopArgs,
 } from "@oh-my-pi/pi-coding-agent/modes/loop-limit";
 import type { LoopConditionOptions, LoopConditionVerdict } from "@oh-my-pi/pi-coding-agent/modes/loop-condition";
-import type { LoopConditionConfig, LoopLimitRuntime } from "@oh-my-pi/pi-tui/status-line/loop";
+import type {
+	LoopConditionConfig,
+	LoopLimitRuntime,
+} from "@oh-my-pi/pi-coding-agent/modes/view-model/status-line/loop";
 import type { LoopWire } from "@omp-web/protocol";
 
 /** What a loop needs from its session. */

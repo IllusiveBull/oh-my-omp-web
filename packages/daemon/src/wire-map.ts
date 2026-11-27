@@ -17,8 +17,8 @@ import type {
 } from "@omp-web/protocol";
 import { ThinkingLevel } from "@oh-my-pi/pi-agent-core/thinking";
 import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/render/render-utils";
-import { AUTO_THINKING, getConfiguredThinkingLevelMetadata } from "@oh-my-pi/pi-tui/thinking";
+import { AUTO_THINKING, getConfiguredThinkingLevelMetadata } from "@oh-my-pi/pi-coding-agent/thinking/levels";
+import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-coding-agent/utils/render-utils";
 import type { TranscriptAgent } from "./spend";
 
 /*

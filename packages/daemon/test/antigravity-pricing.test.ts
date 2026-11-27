@@ -35,13 +35,20 @@ describe("antigravityModelCost", () => {
 
 	test("prefers omp's discovered model cache, which knows models the bundled catalog does not price", () => {
 		const db = modelDb();
-		expect(antigravityModelCost("gemini-4-neon", db)).toBeUndefined();
+		expect(antigravityModelCost("gemini-4-unobtainium", db)).toBeUndefined();
 		const neonCost = { input: 3, output: 15, cacheRead: 0.15, cacheWrite: 0 };
 		const argon = getBundledModel("google", "gemini-4-argon");
 		expect(
-			writeModelCache("google", Date.now(), [{ ...argon, id: "gemini-4-neon", cost: neonCost }], true, "", db),
+			writeModelCache(
+				"google",
+				Date.now(),
+				[{ ...argon, id: "gemini-4-unobtainium", cost: neonCost }],
+				true,
+				"",
+				db,
+			),
 		).not.toBe("failed");
-		expect(antigravityModelCost("gemini-4-neon-high", db)).toEqual(neonCost);
+		expect(antigravityModelCost("gemini-4-unobtainium-high", db)).toEqual(neonCost);
 	});
 
 	test("prices Gemini 4 orchestrators at their base Gemini 4 rate and leaves unknown models unpriced", () => {

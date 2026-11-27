@@ -9,7 +9,9 @@ export type MappedUiRequest =
 	| { kind: "widget"; key: string; lines: string[] | null; placement: WidgetPlacement }
 	| { kind: "title"; title: string }
 	| { kind: "editor_text"; text: string }
-	| { kind: "open_url"; url: string; launchUrl?: string; instructions?: string };
+	| { kind: "open_url"; url: string; launchUrl?: string; instructions?: string }
+	/** A method this daemon does not know (a newer omp): the host cancels it, since omp may be waiting for an answer. */
+	| { kind: "unsupported"; id: string; method: string };
 
 /** Bounds on what an extension can make every connected client hold in its session state. */
 const MAX_WIDGET_LINES = 100;
@@ -26,14 +28,6 @@ function webUrl(value: string | undefined): string | undefined {
 	}
 }
 
-/** Select markers omp sends from 18.20.0 on; the pinned submodule's `RpcExtensionUIRequest` predates them. */
-type RpcSelectRequest = Extract<RpcExtensionUIRequest, { method: "select" }> & {
-	initialIndex?: number;
-	selectionMarker?: "radio" | "checkbox";
-	checkedIndices?: number[];
-	markableCount?: number;
-};
-
 /**
  * omp `extension_ui_request` -> protocol. The `UiRequest` arms are structurally copied from `RpcExtensionUIRequest`
  * (the web package cannot import coding-agent types); every arm is built field-by-field from the upstream type
@@ -41,24 +35,22 @@ type RpcSelectRequest = Extract<RpcExtensionUIRequest, { method: "select" }> & {
  */
 export function mapUiRequest(req: RpcExtensionUIRequest): MappedUiRequest {
 	switch (req.method) {
-		case "select": {
-			const select: RpcSelectRequest = req;
+		case "select":
 			return {
 				kind: "request",
 				request: {
-					id: select.id,
+					id: req.id,
 					method: "select",
-					title: select.title,
-					options: select.options,
-					optionDetails: select.optionDetails,
-					initialIndex: select.initialIndex,
-					selectionMarker: select.selectionMarker,
-					checkedIndices: select.checkedIndices,
-					markableCount: select.markableCount,
-					timeout: select.timeout,
+					title: req.title,
+					options: req.options,
+					optionDetails: req.optionDetails,
+					initialIndex: req.initialIndex,
+					selectionMarker: req.selectionMarker,
+					checkedIndices: req.checkedIndices,
+					markableCount: req.markableCount,
+					timeout: req.timeout,
 				},
 			};
-		}
 		case "confirm":
 			return {
 				kind: "request",
@@ -91,6 +83,11 @@ export function mapUiRequest(req: RpcExtensionUIRequest): MappedUiRequest {
 			return {
 				kind: "request",
 				request: { id: req.id, method: "ask", questions: req.questions, timeout: req.timeout },
+			};
+		case "form":
+			return {
+				kind: "request",
+				request: { id: req.id, method: "form", html: req.html, timeout: req.timeout },
 			};
 		case "cancel":
 			return { kind: "cancel", targetId: req.targetId };
@@ -128,6 +125,11 @@ export function mapUiRequest(req: RpcExtensionUIRequest): MappedUiRequest {
 			}
 			return { kind: "open_url", url, launchUrl: webUrl(req.launchUrl), instructions: req.instructions };
 		}
+		default: {
+			// The installed omp updates on its own and can be newer than the pinned submodule.
+			const unknown = req as { id: string; method: unknown };
+			return { kind: "unsupported", id: unknown.id, method: String(unknown.method) };
+		}
 	}
 }
 
@@ -135,5 +137,6 @@ export function toRpcUiResponse(id: string, body: UiResponseBody): RpcExtensionU
 	if ("value" in body) return { type: "extension_ui_response", id, value: body.value };
 	if ("confirmed" in body) return { type: "extension_ui_response", id, confirmed: body.confirmed };
 	if ("answers" in body) return { type: "extension_ui_response", id, answers: body.answers };
+	if ("data" in body) return { type: "extension_ui_response", id, data: body.data };
 	return { type: "extension_ui_response", id, cancelled: true };
 }

@@ -1,5 +1,7 @@
 import { stat } from "node:fs/promises";
 import { basename } from "node:path";
+import { fieldQuestions } from "@oh-my-pi/pi-coding-agent/tools/html-form/data";
+import { parseHtmlForm } from "@oh-my-pi/pi-coding-agent/tools/html-form/parse";
 import type {
 	AttentionEvent,
 	BrokerLinkConfig,
@@ -92,6 +94,11 @@ function askedText(request: UiRequest): string {
 	switch (request.method) {
 		case "ask":
 			return request.questions[0]?.question ?? "";
+		case "form": {
+			const form = parseHtmlForm(request.html);
+			const first = form.fields.find(field => field.name);
+			return first ? (fieldQuestions(form).get(first) ?? "") : "";
+		}
 		case "confirm":
 			return [request.title, request.message].filter(Boolean).join(": ");
 		case "select":

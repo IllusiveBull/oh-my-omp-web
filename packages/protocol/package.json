@@ -12,7 +12,7 @@
 		"check:types": "bun check --no-script -p tsconfig.json"
 	},
 	"dependencies": {
-		"@oh-my-pi/pi-tui": "workspace:*",
+		"@oh-my-pi/pi-coding-agent": "workspace:*",
 		"@oh-my-pi/pi-wire": "workspace:*"
 	}
 }

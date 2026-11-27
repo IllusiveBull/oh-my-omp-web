@@ -534,14 +534,21 @@ export type UiRequest =
 	| { id: string; method: "confirm"; title: string; message: string; timeout?: number }
 	| { id: string; method: "input"; title: string; placeholder?: string; secret?: boolean; timeout?: number }
 	| { id: string; method: "editor"; title: string; prefill?: string; promptStyle?: boolean }
-	| { id: string; method: "ask"; questions: AskQuestion[]; timeout?: number };
+	| { id: string; method: "ask"; questions: AskQuestion[]; timeout?: number }
+	/** omp's `form` dialog: the `ask` tool's whole HTML `<form>`, rendered by the client and answered with `data`. */
+	| { id: string; method: "form"; html: string; timeout?: number };
+
+/** Submitted value of one form control: text, a number for `number`/`range` inputs, or a group's checked values. */
+export type FormValue = string | number | string[];
 
 /** The human's answer; the daemon turns it into omp's `extension_ui_response`. */
 export type UiResponseBody =
 	| { value: string }
 	| { confirmed: boolean }
 	| { cancelled: true }
-	| { answers: { id: string; selectedOptions: string[]; customInput?: string }[] };
+	| { answers: { id: string; selectedOptions: string[]; customInput?: string }[] }
+	/** Answers a `form` request: submitted values by control `name`. */
+	| { data: Record<string, FormValue> };
 
 // ---------------------------------------------------------------------------
 // Sequenced session events (daemon event log)

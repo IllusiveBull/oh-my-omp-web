@@ -77,6 +77,19 @@ function parseUiResponse(v: unknown): UiResponseBody {
 		});
 		return { answers };
 	}
+	if (isRec(v.data)) {
+		// A null prototype keeps a control named `__proto__` an ordinary key.
+		const data: Record<string, string | number | string[]> = Object.create(null);
+		for (const [name, value] of Object.entries(v.data)) {
+			const ok =
+				typeof value === "string" ||
+				(typeof value === "number" && Number.isFinite(value)) ||
+				(Array.isArray(value) && value.every(item => typeof item === "string"));
+			if (!ok) throw new Error("ui.response: malformed form data");
+			data[name] = value as string | number | string[];
+		}
+		return { data };
+	}
 	throw new Error("ui.response: unrecognised response shape");
 }
 

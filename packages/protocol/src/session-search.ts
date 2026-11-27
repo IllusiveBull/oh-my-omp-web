@@ -1,4 +1,4 @@
-import { FuzzyText } from "@oh-my-pi/pi-tui/fuzzy";
+import { FuzzyText } from "@oh-my-pi/pi-coding-agent/utils/fuzzy";
 
 /**
  * Session search ranking shared by the daemon (which holds each session's transcript text and omp's prompt history)
