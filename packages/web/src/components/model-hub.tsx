@@ -2,6 +2,7 @@ import type { ModelOption, ModelRolesWire, SessionOptions } from "@omp-web/proto
 import { X } from "lucide-react";
 import { type CSSProperties, type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { ModelSearch, modelRef } from "../lib/model-search";
+import { cacheModelRoles, getCachedModelRoles, invalidateCachedModelRoles } from "../lib/use-model-roles";
 import { ompText, thinkingToken } from "./status-line";
 import type { DaemonClient } from "../store/daemon-client";
 import { IconButton } from "./ui/icon-button";
@@ -56,7 +57,7 @@ export function parseRoleSelector(
  * terminal UI does. Switching this session to a role is the status line's role menu.
  */
 export function ModelHub({ client, machine, sessionId, model, thinkingLevel, onRun, onClose }: Props): ReactNode {
-	const [roles, setRoles] = useState<ModelRolesWire | null>(null);
+	const [roles, setRoles] = useState<ModelRolesWire | null>(() => getCachedModelRoles(client, machine));
 	const [models, setModels] = useState<ModelOption[] | null>(null);
 	const [editing, setEditing] = useState<string | null>(null);
 	const [filter, setFilter] = useState("");
@@ -68,8 +69,11 @@ export function ModelHub({ client, machine, sessionId, model, thinkingLevel, onR
 
 	const loadRoles = useCallback(async (): Promise<void> => {
 		const ack = await client.request(machine, { t: "session.roles", sessionId });
-		if (ack.ok) setRoles(ack.data as ModelRolesWire);
-		else setError(ack.error);
+		if (ack.ok) {
+			const data = ack.data as ModelRolesWire;
+			cacheModelRoles(client, machine, undefined, data);
+			setRoles(data);
+		} else setError(ack.error);
 	}, [client, machine, sessionId]);
 
 	useEffect(() => {
@@ -121,6 +125,7 @@ export function ModelHub({ client, machine, sessionId, model, thinkingLevel, onR
 		act(async () => {
 			const ack = await client.request(machine, { t: "session.set_role", sessionId, role, selector });
 			if (!ack.ok) return ack.error;
+			invalidateCachedModelRoles(client, machine);
 			const data = ack.data as { warning?: string } | undefined;
 			if (data?.warning) setWarning(data.warning);
 			setEditing(null);

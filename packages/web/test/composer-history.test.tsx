@@ -43,6 +43,7 @@ test("recalls prompts in order, respects multiline editing, and restores the dra
 		);
 	}
 	const view = await dom.mount(<Editor />);
+	expect(view.query(".composer-input")?.getAttribute("title")).toBeNull();
 	const input = Object.assign(view.query(".composer-input")!, {
 		selectionStart: 0,
 		selectionEnd: 0,

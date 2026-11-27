@@ -117,7 +117,7 @@ export interface AntigravityAcpOptions {
 	authMethod?: string;
 	/** Initial ACP execution mode id (e.g. `auto`, `accept-edits`, `plan`), when supported by the server. */
 	mode?: string;
-	/** Initial client-side permission approval policy (`ask`, `edits`, `auto`; default `ask`). */
+	/** Initial client-side permission approval policy (`ask`, `edits`, `auto`; default `auto`). */
 	permissionMode?: PermissionMode;
 	cwd: string;
 	/** Optional initial model selector (`antigravity/<id>` or `antigravity/<id>:<thinking>`). */
@@ -557,7 +557,7 @@ export class AntigravityAcpSource implements RpcSource {
 
 	constructor(private readonly options: AntigravityAcpOptions) {
 		this.#sessionName = options.initialTitle;
-		this.#permissionMode = options.permissionMode ?? "ask";
+		this.#permissionMode = options.permissionMode ?? "auto";
 	}
 
 	/** Spawns `agy acp`, performs the ACP `initialize` handshake, and creates or resumes the session. */

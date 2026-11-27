@@ -540,7 +540,6 @@ export function Composer({
 					ref={input}
 					className="composer-input"
 					value={draft}
-					title="↑ / ↓: prompt history at the first / last line"
 					onChange={e => edit(e.target.value)}
 					onKeyDown={onKeyDown}
 					onPaste={onPaste}

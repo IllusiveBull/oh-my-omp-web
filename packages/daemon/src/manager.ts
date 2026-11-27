@@ -149,6 +149,8 @@ export class SessionManager {
 	readonly #roles: ModelRoleStore;
 	readonly #readSetting: (key: string, cwd?: string) => Promise<unknown>;
 	readonly #antigravityUsage: AntigravityUsageProbe;
+	#themeCache: { value: OmpThemeWire; expiresAt: number } | null = null;
+	#themeInflight: Promise<OmpThemeWire> | null = null;
 
 	constructor(private readonly options: ManagerOptions) {
 		this.#owned = options.owned ?? new MemoryOwnedSessions();
@@ -188,9 +190,20 @@ export class SessionManager {
 		return this.#antigravityUsage.probe();
 	}
 
-	/** The colours of omp's configured dark and light themes. */
+	/** The colours of omp's configured dark and light themes (cached briefly to avoid spawning `omp config` on every switch). */
 	theme(): Promise<OmpThemeWire> {
-		return ompTheme(this.#readSetting);
+		if (this.#themeCache && Date.now() < this.#themeCache.expiresAt) return Promise.resolve(this.#themeCache.value);
+		if (this.#themeInflight) return this.#themeInflight;
+		const pending = ompTheme(this.#readSetting)
+			.then(value => {
+				this.#themeCache = { value, expiresAt: Date.now() + 30_000 };
+				return value;
+			})
+			.finally(() => {
+				if (this.#themeInflight === pending) this.#themeInflight = null;
+			});
+		this.#themeInflight = pending;
+		return pending;
 	}
 
 	/** omp's model roles as seen from the hosted session's directory (project settings apply there). */

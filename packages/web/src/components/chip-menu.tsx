@@ -8,6 +8,7 @@ interface Props {
 	buttonClass?: string;
 	/** Accessible name of a trigger whose label is only an icon. */
 	ariaLabel?: string;
+	ariaBusy?: boolean;
 	disabled?: boolean;
 	/** `up`: the popover opens above the chip (a chip at the bottom of the page). */
 	placement?: "up";
@@ -44,6 +45,7 @@ export function ChipMenu({
 	title,
 	buttonClass,
 	ariaLabel,
+	ariaBusy,
 	disabled,
 	placement,
 	onOpen,
@@ -98,6 +100,7 @@ export function ChipMenu({
 				className={buttonClass ?? "chip chip--button"}
 				title={title}
 				aria-label={ariaLabel}
+				aria-busy={ariaBusy || undefined}
 				aria-haspopup="listbox"
 				aria-expanded={open}
 				disabled={disabled}

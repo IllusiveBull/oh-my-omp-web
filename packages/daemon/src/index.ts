@@ -84,7 +84,7 @@ Options:
   --antigravity-session-dir <dir>  custom Antigravity brain directory for historical session discovery
   --antigravity-auth-method <id>   preferred ACP authenticate methodId (e.g. oauth-personal, gemini-api-key)
   --antigravity-mode <id>          default ACP execution mode (e.g. default, accept-edits, auto, plan)
-  --antigravity-permission-mode <mode>  tool approval policy: ask (default), edits, or auto
+  --antigravity-permission-mode <mode>  tool approval policy: ask, edits, or auto (default)
   --session-dir <dir>       omp's --session-dir: one flat directory used for new sessions and the only one listed
                             (default: omp's per-project directories under its agent dir, all of them listed)
   gateway role:

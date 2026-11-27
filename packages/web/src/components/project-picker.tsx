@@ -1,5 +1,5 @@
 import type { GatewaySessionInfo, MachineSummary } from "@omp-web/protocol";
-import { FolderGit2, GitBranch, Plus, RefreshCw, Trash2 } from "lucide-react";
+import { FolderGit2, GitBranch, LoaderCircle, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { type FormEvent, type ReactNode, useEffect, useState } from "react";
 import { ackedProject } from "../lib/ack";
 import {
@@ -211,6 +211,10 @@ interface PickerProps {
 	placement?: "up";
 	/** See {@link PanelProps.allProjects}; the chip then reads "All projects" while none is chosen. */
 	allProjects?: boolean;
+	/** Target name while a session relocation is in flight (shows a spinner and `switching to <name>…`). */
+	switching?: string | null;
+	/** Disables opening the menu (e.g. while another relocation is in flight). */
+	disabled?: boolean;
 }
 
 /** The project chip and its menu. */
@@ -222,18 +226,30 @@ export function ProjectPicker({
 	onSelection,
 	placement,
 	allProjects,
+	switching,
+	disabled,
 }: PickerProps): ReactNode {
 	const project = findProject(machine, target.project);
+	const isSwitching = switching !== undefined && switching !== null;
 	return (
 		<ChipMenu
-			title="Project"
-			disabled={!machine}
+			title={isSwitching ? (switching ? `Switching to ${switching}…` : "Switching…") : "Project"}
+			buttonClass={isSwitching ? "chip chip--button status-chip--switching" : undefined}
+			ariaBusy={isSwitching}
+			disabled={disabled || isSwitching || !machine}
 			placement={placement}
 			label={
-				<>
-					<FolderGit2 size={14} aria-hidden="true" />{" "}
-					{project?.name ?? (allProjects ? "All projects" : "Pick a project")}
-				</>
+				isSwitching ? (
+					<>
+						<LoaderCircle aria-hidden="true" />
+						{switching ? `switching to ${switching}…` : "switching…"}
+					</>
+				) : (
+					<>
+						<FolderGit2 size={14} aria-hidden="true" />{" "}
+						{project?.name ?? (allProjects ? "All projects" : "Pick a project")}
+					</>
+				)
 			}
 		>
 			{close =>
@@ -259,19 +275,31 @@ export function WorktreePicker({
 	target,
 	onSelection,
 	placement,
-}: Pick<PickerProps, "machine" | "target" | "onSelection" | "placement">): ReactNode {
+	switching,
+	disabled,
+}: Pick<PickerProps, "machine" | "target" | "onSelection" | "placement" | "switching" | "disabled">): ReactNode {
 	const project = findProject(machine, target.project);
 	const worktree = project?.worktrees.find(w => w.path === target.worktree);
+	const isSwitching = switching !== undefined && switching !== null;
 	return (
 		<ChipMenu
-			title="Worktree and branch"
-			disabled={!project}
+			title={isSwitching ? (switching ? `Switching to ${switching}…` : "Switching…") : "Worktree and branch"}
+			buttonClass={isSwitching ? "chip chip--button status-chip--switching" : undefined}
+			ariaBusy={isSwitching}
+			disabled={disabled || isSwitching || !project}
 			placement={placement}
 			label={
-				<>
-					<GitBranch size={14} aria-hidden="true" />{" "}
-					{worktree ? (worktree.branch ?? `${basename(worktree.path)} (detached)`) : "Pick a worktree"}
-				</>
+				isSwitching ? (
+					<>
+						<LoaderCircle aria-hidden="true" />
+						{switching ? `switching to ${switching}…` : "switching…"}
+					</>
+				) : (
+					<>
+						<GitBranch size={14} aria-hidden="true" />{" "}
+						{worktree ? (worktree.branch ?? `${basename(worktree.path)} (detached)`) : "Pick a worktree"}
+					</>
+				)
 			}
 		>
 			{close => (

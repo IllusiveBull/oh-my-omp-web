@@ -44,7 +44,8 @@ export function AgentDrawer({ client, machine, sessionId, subagent, onClose }: P
 	const running = useRef(false);
 	running.current = agent.status === "running";
 	const body = useRef<HTMLDivElement>(null);
-	useTranscriptTimes(body);
+	const shownEntries = useMemo(() => presentEntries(state.entries), [state.entries]);
+	useTranscriptTimes(body, shownEntries);
 	useTranscriptTail(body);
 	const now = useNow(agent.status === "running");
 
@@ -100,7 +101,6 @@ export function AgentDrawer({ client, machine, sessionId, subagent, onClose }: P
 	}, [progress, lifecycle, agent.status, agent.lastActivity]);
 
 	const model = progress?.progress.resolvedModel;
-	const shownEntries = useMemo(() => presentEntries(state.entries), [state.entries]);
 
 	// An older page lands above what the reader looks at: keep that in place (its distance from the bottom).
 	const anchor = useRef<number | null>(null);

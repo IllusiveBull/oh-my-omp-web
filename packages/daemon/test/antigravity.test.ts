@@ -479,11 +479,12 @@ afterEach(() => {
 describe("Antigravity ACP RPC end-to-end", () => {
 	test("HostedSession over AntigravityAcpSource streams thinking, tools, plan, permissions, model switch, and follow-up queue", async () => {
 		const dir = tempDir("agy-acp-");
-		const agyBin = writeFakeAgy(dir);
+		writeFakeAgy(dir);
 		const registry = new AntigravitySessionRegistry(join(dir, "registry.json"));
 
 		const source = new AntigravityAcpSource({
-			binaryPath: agyBin,
+			binaryPath: process.execPath,
+			args: [join(dir, "fake-agy.ts"), "acp"],
 			cwd: dir,
 			onMetadata: patch => registry.upsert(patch),
 		});
@@ -547,7 +548,23 @@ describe("Antigravity ACP RPC end-to-end", () => {
 			expect(view.status?.contextUsage?.percent).toBeCloseTo(1.2, 1);
 			expect(registry.get("agy-sess-new")?.title).toBe("ACP Demo Title");
 
-			// 3. Permission request round-trip via extension UI
+			// 3. Default permissionMode is `auto`; switching to `ask` exercises the permission prompt round-trip via extension UI
+			expect(view.status?.permissionMode).toBe("auto");
+			const resultsBeforeAuto = events.filter(e => e.k === "prompt_result").length;
+			await session.prompt("ASK_PERM");
+			await new Promise<void>(resolve => {
+				const check = setInterval(() => {
+					if (events.filter(e => e.k === "prompt_result").length > resultsBeforeAuto) {
+						clearInterval(check);
+						resolve();
+					}
+				}, 10);
+			});
+			await session.whenSynced();
+			expect(events.some(e => e.k === "ui")).toBe(false);
+
+			await session.setPermissionMode("ask");
+			expect(view.status?.permissionMode).toBe("ask");
 			const permSeen = new Promise<string>(resolve => {
 				const check = setInterval(() => {
 					const ui = events.find(e => e.k === "ui");
@@ -617,9 +634,10 @@ describe("Antigravity ACP RPC end-to-end", () => {
 
 	test("permissionMode (edits / auto) auto-approves permissions and switching mid-prompt unblocks pending dialogs", async () => {
 		const dir = tempDir("agy-perm-");
-		const agyBin = writeFakeAgy(dir);
+		writeFakeAgy(dir);
 		const source = new AntigravityAcpSource({
-			binaryPath: agyBin,
+			binaryPath: process.execPath,
+			args: [join(dir, "fake-agy.ts"), "acp"],
 			cwd: dir,
 			permissionMode: "edits",
 		});
