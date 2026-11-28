@@ -1,4 +1,4 @@
-import { defaultCapabilities, type GitStatus, type SessionBackend } from "@omp-web/protocol";
+import { defaultCapabilities, type GitStatus, type SessionBackend, type SessionStatus } from "@omp-web/protocol";
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { AccountsPanel } from "./components/accounts-panel";
 import { Banners } from "./components/banners";
@@ -256,27 +256,35 @@ export function App({ client }: { client: DaemonClient }): ReactNode {
 		terminalMachine === null
 			? 0
 			: (terminalsState.machines[terminalMachine]?.terminals.filter(t => t.state === "running").length ?? 0);
-	const toolbar = (agents: AgentCounts = { total: 0, running: 0 }): ReactNode => (
-		<>
-			<UsageMenu
-				client={client}
-				auth={daemon.auth}
-				machines={daemon.machines}
-				onSeeAll={() => {
-					if (parseRoute(location.hash).main?.kind !== "accounts") toggleAccounts();
-				}}
-			/>
-			<DockToolbar
-				open={dock?.tab ?? null}
-				onToggle={toggleDock}
-				blocked={blocked}
-				agents={agents}
-				terminals={runningTerminals}
-				changes={changes}
-				branch={worktreeStatus ? describeBranch(worktreeStatus.branch) : undefined}
-			/>
-		</>
-	);
+	const toolbar = (agents: AgentCounts = { total: 0, running: 0 }, status: SessionStatus | null = null): ReactNode => {
+		// The open session's provider: its live status once loaded, else the session list's last known model.
+		const backend = status?.backend ?? info?.backend;
+		const provider =
+			backend === "antigravity" ? "antigravity" : ((status?.model ?? info?.model)?.split("/")[0] ?? null);
+		return (
+			<>
+				<UsageMenu
+					client={client}
+					auth={daemon.auth}
+					machines={daemon.machines}
+					provider={provider}
+					pin={status?.pins?.find(p => p.provider === provider)?.hash ?? null}
+					onSeeAll={() => {
+						if (parseRoute(location.hash).main?.kind !== "accounts") toggleAccounts();
+					}}
+				/>
+				<DockToolbar
+					open={dock?.tab ?? null}
+					onToggle={toggleDock}
+					blocked={blocked}
+					agents={agents}
+					terminals={runningTerminals}
+					changes={changes}
+					branch={worktreeStatus ? describeBranch(worktreeStatus.branch) : undefined}
+				/>
+			</>
+		);
+	};
 
 	const machine = daemon.machines.find(m => m.id === (selected?.machine ?? context.machine));
 	const terminalRef: TerminalRef | null = dock?.tab === "terminal" ? dock.ref : null;

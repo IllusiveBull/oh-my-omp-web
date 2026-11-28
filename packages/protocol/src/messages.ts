@@ -487,6 +487,11 @@ export interface SessionStatus {
 	goal?: GoalWire;
 	/** Absent while loop mode is off. */
 	loop?: LoopWire;
+	/**
+	 * The OAuth account that served the session last, per provider: the latest `credential_pin` of each provider on the
+	 * active branch (`credentialPinHash`, a digest of the account's identity). Absent when no OAuth account served it.
+	 */
+	pins?: { provider: string; hash: string }[];
 	/** Agent backend driving this session; absent means `"omp"`. */
 	backend?: SessionBackend;
 	/** Capabilities supported by this session's backend; absent means all omp capabilities. */

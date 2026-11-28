@@ -194,6 +194,8 @@ export function antigravitySignIn(state: MachineUsage | undefined): SignIn {
 /** One account's usage as the usage menu shows it. */
 export interface UsageEntry {
 	key: string;
+	/** The provider id (`anthropic`, `antigravity`); compare with {@link providerName} to match omp's aliases. */
+	provider: string;
 	/** "Claude", "Claude 2" when the same provider has several accounts. */
 	name: string;
 	report: UsageReportWire | null;
@@ -232,6 +234,7 @@ export function antigravityEntries(
 		byAccount.set(key, {
 			entry: {
 				key,
+				provider: "antigravity",
 				name: providerName("antigravity"),
 				report: state.report,
 				origin: null,
@@ -259,6 +262,7 @@ export function usageEntries(
 ): UsageEntry[] {
 	const entries: UsageEntry[] = usage.reports.map((report, i) => ({
 		key: `broker:${i}:${report.provider}:${report.identity ?? ""}`,
+		provider: report.provider,
 		name: providerName(report.provider),
 		report,
 		origin: null,

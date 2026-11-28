@@ -1,5 +1,5 @@
 {
-	"headSeq": 37,
+	"headSeq": 38,
 	"events": [
 		{
 			"seq": 1,
@@ -776,6 +776,33 @@
 		{
 			"seq": 21,
 			"ev": {
+				"k": "state",
+				"status": {
+					"sessionId": "sess-1",
+					"cwd": "/work/project",
+					"pins": [
+						{
+							"provider": "anthropic",
+							"hash": "0000000000000000000000000000000000000000000000000000000000000000"
+						}
+					],
+					"thinkingLevel": "high",
+					"isStreaming": true,
+					"isCompacting": false,
+					"queue": {
+						"steering": [],
+						"followUp": [],
+						"liveSteered": 0
+					},
+					"todos": [],
+					"activeSince": 1700000000000,
+					"cost": 0
+				}
+			}
+		},
+		{
+			"seq": 22,
+			"ev": {
 				"k": "agent",
 				"event": {
 					"type": "turn_end",
@@ -871,7 +898,7 @@
 			}
 		},
 		{
-			"seq": 22,
+			"seq": 23,
 			"ev": {
 				"k": "agent",
 				"event": {
@@ -880,7 +907,7 @@
 			}
 		},
 		{
-			"seq": 23,
+			"seq": 24,
 			"ev": {
 				"k": "agent",
 				"event": {
@@ -924,7 +951,7 @@
 			}
 		},
 		{
-			"seq": 24,
+			"seq": 25,
 			"ev": {
 				"k": "agent",
 				"event": {
@@ -967,7 +994,7 @@
 			}
 		},
 		{
-			"seq": 25,
+			"seq": 26,
 			"ev": {
 				"k": "agent",
 				"event": {
@@ -1010,7 +1037,7 @@
 			}
 		},
 		{
-			"seq": 26,
+			"seq": 27,
 			"ev": {
 				"k": "agent",
 				"event": {
@@ -1053,7 +1080,7 @@
 			}
 		},
 		{
-			"seq": 27,
+			"seq": 28,
 			"ev": {
 				"k": "agent",
 				"event": {
@@ -1096,7 +1123,7 @@
 			}
 		},
 		{
-			"seq": 28,
+			"seq": 29,
 			"ev": {
 				"k": "agent",
 				"event": {
@@ -1139,7 +1166,7 @@
 			}
 		},
 		{
-			"seq": 29,
+			"seq": 30,
 			"ev": {
 				"k": "agent",
 				"event": {
@@ -1187,7 +1214,7 @@
 			}
 		},
 		{
-			"seq": 30,
+			"seq": 31,
 			"ev": {
 				"k": "agent",
 				"event": {
@@ -1235,7 +1262,7 @@
 			}
 		},
 		{
-			"seq": 31,
+			"seq": 32,
 			"ev": {
 				"k": "agent",
 				"event": {
@@ -1283,7 +1310,7 @@
 			}
 		},
 		{
-			"seq": 32,
+			"seq": 33,
 			"ev": {
 				"k": "agent",
 				"event": {
@@ -1331,7 +1358,7 @@
 			}
 		},
 		{
-			"seq": 33,
+			"seq": 34,
 			"ev": {
 				"k": "agent",
 				"event": {
@@ -1383,7 +1410,7 @@
 			}
 		},
 		{
-			"seq": 34,
+			"seq": 35,
 			"ev": {
 				"k": "entries",
 				"entries": [
@@ -1449,7 +1476,7 @@
 			}
 		},
 		{
-			"seq": 35,
+			"seq": 36,
 			"ev": {
 				"k": "agent",
 				"event": {
@@ -1500,7 +1527,7 @@
 			}
 		},
 		{
-			"seq": 36,
+			"seq": 37,
 			"ev": {
 				"k": "agent",
 				"event": {
@@ -1651,12 +1678,18 @@
 			}
 		},
 		{
-			"seq": 37,
+			"seq": 38,
 			"ev": {
 				"k": "state",
 				"status": {
 					"sessionId": "sess-1",
 					"cwd": "/work/project",
+					"pins": [
+						{
+							"provider": "anthropic",
+							"hash": "0000000000000000000000000000000000000000000000000000000000000000"
+						}
+					],
 					"thinkingLevel": "high",
 					"isStreaming": false,
 					"isCompacting": false,
@@ -1892,6 +1925,12 @@
 		"status": {
 			"sessionId": "sess-1",
 			"cwd": "/work/project",
+			"pins": [
+				{
+					"provider": "anthropic",
+					"hash": "0000000000000000000000000000000000000000000000000000000000000000"
+				}
+			],
 			"thinkingLevel": "high",
 			"isStreaming": false,
 			"isCompacting": false,

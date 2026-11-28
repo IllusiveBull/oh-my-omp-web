@@ -2,8 +2,9 @@ import { Database } from "bun:sqlite";
 import { existsSync } from "node:fs";
 import { isRecord } from "@oh-my-pi/pi-utils";
 import type { RpcSessionState } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
+import type { SessionEntry as OmpSessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
 import { credentialPinHash } from "@oh-my-pi/pi-coding-agent/session/credential-pin";
-import type { SessionFacts } from "@omp-web/protocol";
+import type { SessionFacts, SessionStatus } from "@omp-web/protocol";
 import { localAgentDbPath } from "./migration";
 
 /**
@@ -118,6 +119,16 @@ export async function readSessionFileFacts(
 		lastRequestAt,
 		promptCacheKey,
 	};
+}
+
+/**
+ * The latest `credential_pin` per provider among `entries` (an active branch, root to leaf): which OAuth account served
+ * the session last. Undefined when none was recorded (API keys and non-OAuth providers record none).
+ */
+export function branchPins(entries: Iterable<OmpSessionEntry>): SessionStatus["pins"] {
+	const pins = new Map<string, string>();
+	for (const entry of entries) if (entry.type === "credential_pin") pins.set(entry.provider, entry.hash);
+	return pins.size === 0 ? undefined : [...pins].map(([provider, hash]) => ({ provider, hash }));
 }
 
 // ---------------------------------------------------------------------------

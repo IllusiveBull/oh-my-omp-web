@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import type { UsageResponse } from "@oh-my-pi/pi-ai/auth-broker";
+import { credentialPinHash } from "@oh-my-pi/pi-coding-agent/session/credential-pin";
 import { parseUsageResponse } from "../src/broker-usage";
 
 // Typed against upstream's own response type: if omp changes `UsageResponse` (or the report/limit types inside it) so that
@@ -166,6 +167,30 @@ describe("parseUsageResponse", () => {
 			],
 		});
 		expect(JSON.stringify(parsed)).not.toContain("sk-");
-		expect(parsed.reports[0]).toEqual({ provider: "x", fetchedAt: 1, identity: "a@b", limits: [] });
+		expect(parsed.reports[0]).toEqual({
+			provider: "x",
+			fetchedAt: 1,
+			identity: "a@b",
+			limits: [],
+			pinHashes: [credentialPinHash("x", { email: "a@b" })!],
+		});
+	});
+
+	test("pin hashes match the session pin of the report's account, with or without the org the credential stores", () => {
+		const parsed = parseUsageResponse({
+			generatedAt: 1,
+			reports: [
+				{
+					provider: "anthropic",
+					fetchedAt: 1,
+					limits: [],
+					metadata: { accountId: "acc", email: "a@b", orgId: "org" },
+				},
+			],
+		});
+		const hashes = parsed.reports[0]!.pinHashes;
+		expect(hashes).toContain(credentialPinHash("anthropic", { accountId: "acc", email: "a@b", orgId: "org" })!);
+		expect(hashes).toContain(credentialPinHash("anthropic", { accountId: "acc", email: "a@b" })!);
+		expect(hashes).not.toContain(credentialPinHash("anthropic", { accountId: "acc", email: "a@b", orgId: "other" })!);
 	});
 });

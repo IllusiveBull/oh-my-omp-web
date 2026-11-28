@@ -1,4 +1,5 @@
 import { resolveUsedFraction } from "@oh-my-pi/pi-ai";
+import { credentialPinHash } from "@oh-my-pi/pi-coding-agent/session/credential-pin";
 import { isRecord } from "@oh-my-pi/pi-utils";
 import type { UsageResponse } from "@oh-my-pi/pi-ai/auth-broker";
 import type { UsageLimitWire, UsageReportWire } from "@omp-web/protocol";
@@ -100,6 +101,27 @@ function identityOf(raw: Record<string, unknown>): string | undefined {
 }
 
 /**
+ * The `credential_pin` hashes the report's account may have in a session file: upstream hashes the credential's identity
+ * (provider, accountId, email, orgId, projectId), and the report's metadata carries the same fields when the provider
+ * reported them. A report may know an org or project its credential does not (or the reverse), so the variants without
+ * them are listed too. Raw values, untrimmed: the digest is over what the credential stores.
+ */
+function pinHashesOf(provider: string, metadata: Record<string, unknown> | undefined): string[] {
+	const field = (key: string): string | undefined =>
+		typeof metadata?.[key] === "string" && metadata[key] !== "" ? (metadata[key] as string) : undefined;
+	const accountId = field("accountId");
+	const email = field("email");
+	const hashes = new Set<string>();
+	for (const orgId of new Set([field("orgId"), undefined])) {
+		for (const projectId of new Set([field("projectId"), undefined])) {
+			const hash = credentialPinHash(provider, { accountId, email, orgId, projectId });
+			if (hash) hashes.add(hash);
+		}
+	}
+	return [...hashes];
+}
+
+/**
  * Reads the broker's `/v1/usage` body. Upstream's type is `UsageResponse` (`{ generatedAt, reports: UsageReport[] }`);
  * the body is validated rather than trusted (a broker of another version may add or drop fields), and what does not parse
  * is counted in `skipped` instead of failing the page. Throws when the answer is not a usage response at all.
@@ -126,6 +148,7 @@ export function parseUsageResponse(body: unknown): ParsedUsage {
 		const notes = Array.isArray(raw.notes) ? raw.notes.filter((n): n is string => typeof n === "string") : [];
 		const identity = identityOf(raw);
 		const metadata = isRecord(raw.metadata) ? raw.metadata : undefined;
+		const pinHashes = pinHashesOf(provider, metadata);
 		const reset = isRecord(raw.resetCredits) ? raw.resetCredits : undefined;
 		const availableCount = finite(reset?.availableCount);
 		const credits = Array.isArray(reset?.credits)
@@ -148,6 +171,7 @@ export function parseUsageResponse(body: unknown): ParsedUsage {
 				? { orgName: text(metadata?.orgName) ?? text(metadata?.orgId) }
 				: {}),
 			...(text(metadata?.planType) ? { planType: text(metadata?.planType) } : {}),
+			...(pinHashes.length > 0 ? { pinHashes } : {}),
 			...(availableCount !== undefined
 				? {
 						resetCredits: {
