@@ -19,6 +19,7 @@ import { loadAntigravityTranscript } from "./antigravity-sessions";
 import type { EventLogOptions } from "./event-log";
 import type { Conversation } from "./session-index";
 import { ViewChannel, type SessionHandle, type SessionListener, type SubscribeResult } from "./session-channel";
+import { branchPins } from "./cache-facts";
 import { toWireEntries } from "./wire-entries";
 
 export interface StoredSessionOptions {
@@ -192,6 +193,7 @@ export class StoredSession implements SessionHandle {
 				sessionFile: conversation.path,
 				cwd: conversation.cwd,
 				model: model?.type === "model_change" ? model.model : undefined,
+				pins: branchPins(branchEntries),
 				thinkingLevel:
 					thinking?.type === "thinking_level_change" ? (thinking.thinkingLevel ?? undefined) : undefined,
 				sessionName: header?.type === "session" ? (header.title ?? conversation.title) : conversation.title,

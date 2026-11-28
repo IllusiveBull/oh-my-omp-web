@@ -214,6 +214,11 @@ export interface UsageReportWire {
 	identity?: string;
 	orgName?: string;
 	planType?: string;
+	/**
+	 * `credentialPinHash`es the report's account may carry in a session's `credential_pin` (see `SessionStatus.pins`):
+	 * the full identity, and without org/project in case the report and the credential disagree on those.
+	 */
+	pinHashes?: string[];
 	resetCredits?: {
 		availableCount: number;
 		redeemableCount?: number;

@@ -1,6 +1,10 @@
 import { basename } from "node:path";
 import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
 import type { RpcSessionState } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
+import type {
+	CredentialPinEntry,
+	SessionEntry as OmpSessionEntry,
+} from "@oh-my-pi/pi-coding-agent/session/session-entries";
 import type { ImageContent } from "@oh-my-pi/pi-ai";
 import { getNextTimeBasedPricingTransition, getTimeBasedPricingPeriod } from "@oh-my-pi/pi-catalog/models";
 import type { ModelCost } from "@oh-my-pi/pi-catalog/types";
@@ -29,6 +33,7 @@ import {
 	type UiResponseBody,
 } from "@omp-web/protocol";
 import type { EventLogOptions } from "./event-log";
+import { branchPins } from "./cache-facts";
 import { BtwRelay, toBtwWire } from "./btw-relay";
 import type { RpcSource } from "./rpc-source";
 import { ViewChannel, type SessionHandle, type SessionListener, type SubscribeResult } from "./session-channel";
@@ -136,6 +141,8 @@ export class HostedSession implements SessionHandle {
 	#parents = new Map<string, string | null>();
 	/** Ids on the active branch, root first, as last published. */
 	#branch: string[] = [];
+	/** The session file's `credential_pin` entries by id (all branches); {@link #pins} picks those on the active branch. */
+	#pinEntries = new Map<string, CredentialPinEntry>();
 	#current: { sessionId: string; file: string | undefined };
 	#syncRunning = false;
 	#syncDirty = false;
@@ -735,6 +742,7 @@ export class HostedSession implements SessionHandle {
 			sessionFile: state.sessionFile,
 			cwd: this.#info.cwd,
 			model: modelId(state),
+			pins: this.#pins(),
 			modelName: state.model?.name,
 			thinkingLevel: state.thinkingLevel,
 			sessionName: state.sessionName,
@@ -815,7 +823,7 @@ export class HostedSession implements SessionHandle {
 	}
 
 	/** Replaces some of the status fields as a whole `state` event: a patch cannot clear a field (JSON drops `undefined`). */
-	#setStatus(fields: Pick<SessionStatus, "goal" | "loop">): void {
+	#setStatus(fields: Pick<SessionStatus, "goal" | "loop" | "pins">): void {
 		const status = this.#channel.view.status;
 		if (!status) return;
 		const next = { ...status, ...fields };
@@ -971,6 +979,8 @@ export class HostedSession implements SessionHandle {
 	async #loadActiveBranch(): Promise<ReturnType<typeof toWireEntries>> {
 		const { entries, leafId } = await this.#source.getEntries();
 		this.#parents = new Map(entries.map(entry => [entry.id, entry.parentId]));
+		this.#pinEntries = new Map();
+		this.#trackPins(entries);
 		this.#spend = emptySpend();
 		addSpend(this.#spend, entries);
 		void this.#rescanTree();
@@ -978,6 +988,15 @@ export class HostedSession implements SessionHandle {
 		this.#branch = activeBranchIds(this.#parents, leafId);
 		const onBranch = new Set(this.#branch);
 		return toWireEntries(entries.filter(entry => onBranch.has(entry.id)));
+	}
+
+	#trackPins(entries: readonly OmpSessionEntry[]): void {
+		for (const entry of entries) if (entry.type === "credential_pin") this.#pinEntries.set(entry.id, entry);
+	}
+
+	/** The latest OAuth account per provider on the active branch (`SessionStatus.pins`). */
+	#pins(): SessionStatus["pins"] {
+		return branchPins(this.#branch.flatMap(id => this.#pinEntries.get(id) ?? []));
 	}
 
 	/** The session file's `/btw` topics by id, newest first; none when omp cannot list them (older omp). */
@@ -1006,6 +1025,7 @@ export class HostedSession implements SessionHandle {
 	/** Replaces the rendered list with the current active branch (leaf moved, or the session file changed). */
 	async #reload(): Promise<void> {
 		this.#emit({ k: "entries", entries: await this.#loadActiveBranch(), reset: true });
+		this.#setStatus({ pins: this.#pins() });
 	}
 
 	/**
@@ -1057,6 +1077,7 @@ export class HostedSession implements SessionHandle {
 		}
 		const { entries, leafId } = reply;
 		for (const entry of entries) this.#parents.set(entry.id, entry.parentId);
+		this.#trackPins(entries);
 		addSpend(this.#spend, entries);
 		if (entries.length > 0) this.#lastEntryId = entries.at(-1)!.id;
 		const next = activeBranchIds(this.#parents, leafId);
@@ -1069,6 +1090,7 @@ export class HostedSession implements SessionHandle {
 				this.#branch = next;
 				const wire = toWireEntries(appended);
 				if (wire.length > 0) this.#emit({ k: "entries", entries: wire }, JSON.stringify(wire).length);
+				this.#setStatus({ pins: this.#pins() });
 				return;
 			}
 		}

@@ -487,17 +487,18 @@
 	}
 }
 
-/* ── Toolbar usage pill (usage-menu.tsx): one ring per account, a menu with every limit ── */
+/* ── Toolbar usage pill (usage-menu.tsx): the open session's account as a ring with its name and number, every other
+ * account as a small ring in a row beneath; a menu with every limit ── */
 
 .usage-pill {
 	display: inline-flex;
 	flex: none;
 	align-items: center;
-	gap: 12px;
+	gap: 8px;
 	min-height: 34px;
 	max-width: 60vw;
 	overflow: hidden;
-	padding: 0 12px;
+	padding: 0 14px 0 8px;
 	border: 1px solid var(--border);
 	border-radius: 999px;
 	background: var(--bg-inset);
@@ -514,11 +515,27 @@
 .usage-item {
 	display: inline-flex;
 	align-items: center;
-	gap: 5px;
+	gap: 7px;
 	color: var(--fg-muted);
 }
 .usage-name {
 	color: var(--fg);
+}
+.usage-stack {
+	display: inline-flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+	line-height: 1.1;
+}
+.usage-main {
+	display: inline-flex;
+	gap: 5px;
+}
+.usage-minis {
+	display: inline-flex;
+	gap: 3px;
+	overflow: hidden;
 }
 .usage-pct {
 	font-variant-numeric: tabular-nums;
@@ -540,7 +557,6 @@
 .usage-ring {
 	flex: none;
 	fill: none;
-	stroke-width: 2.5;
 }
 .usage-ring-track {
 	stroke: color-mix(in oklch, var(--fg) 12%, transparent);

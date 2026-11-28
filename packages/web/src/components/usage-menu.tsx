@@ -1,9 +1,9 @@
 import type { MachineSummary, UsageLimitWire } from "@omp-web/protocol";
 import { ArrowRight, Gauge, RefreshCw, RotateCcw } from "lucide-react";
 import { type ReactNode, useEffect, useMemo, useRef, useSyncExternalStore } from "react";
-import { barWidth, loadHidePrivate, percent } from "../lib/accounts";
+import { barWidth, loadHidePrivate, percent, usageForAccount } from "../lib/accounts";
 import { formatResetAt } from "../lib/time";
-import { peakLimit, type UsageEntry, usageEntries, usageOf, usageTone } from "../lib/usage";
+import { peakLimit, providerName, type UsageEntry, usageEntries, usageOf, usageTone } from "../lib/usage";
 import { useNow } from "../lib/use-now";
 import type { AuthViewState, DaemonClient } from "../store/daemon-client";
 import { SignInChip } from "./accounts/antigravity-card";
@@ -14,6 +14,10 @@ interface Props {
 	client: DaemonClient;
 	auth: AuthViewState;
 	machines: readonly MachineSummary[];
+	/** Provider of the open session's model (`anthropic`), null without a session. */
+	provider: string | null;
+	/** The session's `credential_pin` for that provider: the OAuth account that served it last. */
+	pin: string | null;
 	/** Opens the Accounts page. */
 	onSeeAll(): void;
 }
@@ -23,20 +27,40 @@ const BACKGROUND_MAX_AGE_MS = 5 * 60_000;
 /** How stale the open menu may be. */
 const OPEN_MAX_AGE_MS = 60_000;
 
-/** A progress ring for a 0..1 fraction. */
-function Ring({ fraction, tone }: { fraction: number | undefined; tone: string }): ReactNode {
-	const r = 6;
-	const c = 2 * Math.PI * r;
+/** An account's ring: its 0..1 fill and colour. */
+interface Dial {
+	key: string;
+	fraction: number | undefined;
+	tone: string;
+}
+
+function dialOf(entry: UsageEntry): Dial {
+	if (entry.report === null) return { key: entry.key, fraction: 0, tone: "signed-out" };
+	const peak = peakLimit(entry.report);
+	return { key: entry.key, fraction: peak?.usedFraction, tone: usageTone(peak) };
+}
+
+/** A progress ring, filled clockwise from 12 o'clock: `size` px square, the ring `r` from the centre, `width` thick. */
+function Ring({ dial, size, r, width }: { dial: Dial; size: number; r: number; width: number }): ReactNode {
+	const c = size / 2;
+	const circumference = 2 * Math.PI * r;
 	return (
-		<svg className={`usage-ring usage-ring--${tone}`} viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-			<circle className="usage-ring-track" cx="8" cy="8" r={r} />
+		<svg
+			className={`usage-ring usage-ring--${dial.tone}`}
+			viewBox={`0 0 ${size} ${size}`}
+			width={size}
+			height={size}
+			strokeWidth={width}
+			aria-hidden="true"
+		>
+			<circle className="usage-ring-track" cx={c} cy={c} r={r} />
 			<circle
 				className="usage-ring-fill"
-				cx="8"
-				cy="8"
+				cx={c}
+				cy={c}
 				r={r}
-				strokeDasharray={`${(c * barWidth(fraction)) / 100} ${c}`}
-				transform="rotate(-90 8 8)"
+				strokeDasharray={`${(circumference * barWidth(dial.fraction)) / 100} ${circumference}`}
+				transform={`rotate(-90 ${c} ${c})`}
 			/>
 		</svg>
 	);
@@ -153,11 +177,42 @@ function UsagePanel({
 	);
 }
 
+/** How close an account is to running out; a signed-out account counts as out. */
+function pressure(entry: UsageEntry): number {
+	return entry.report === null ? 1 : (peakLimit(entry.report)?.usedFraction ?? 0);
+}
+
 /**
- * The toolbar's usage pill: one ring per account (omp's broker providers and each machine's Antigravity quota alike,
- * whatever backend the open session uses), opening a menu with every limit. Hidden when no source exists.
+ * The account the open session draws on, among its model provider's: the one the session's `credential_pin` names
+ * (the account that served it last), else the account omp serves that provider from now, else the provider's first.
+ * Without a session, or when its provider reports no usage, the account closest to its limit.
  */
-export function UsageMenu({ client, auth, machines, onSeeAll }: Props): ReactNode {
+function mainEntry(
+	shown: readonly UsageEntry[],
+	provider: string | null,
+	pin: string | null,
+	auth: AuthViewState,
+): UsageEntry {
+	if (provider !== null) {
+		const name = providerName(provider);
+		const same = shown.filter(e => providerName(e.provider) === name);
+		const pinned = pin === null ? undefined : same.find(e => e.report?.pinHashes?.includes(pin));
+		if (pinned) return pinned;
+		const accounts = auth.accounts.accounts;
+		const active = accounts.find(a => a.active && a.provider === provider);
+		const report = active ? usageForAccount(active, auth.usage.reports, accounts) : null;
+		const hit = (report && same.find(e => e.report === report)) ?? same[0];
+		if (hit) return hit;
+	}
+	return shown.reduce((worst, e) => (pressure(e) > pressure(worst) ? e : worst));
+}
+
+/**
+ * The toolbar's usage pill: the open session's account as a ring with its name and percentage, every other account
+ * (omp's broker providers and each machine's Antigravity quota alike) as a small ring in a row beneath. Opens a menu
+ * with every limit. Hidden when no source exists.
+ */
+export function UsageMenu({ client, auth, machines, provider, pin, onSeeAll }: Props): ReactNode {
 	const store = usageOf(client);
 	const state = useSyncExternalStore(store.subscribe, store.getSnapshot);
 	const brokerOn = auth.broker !== null && auth.broker.phase !== "disabled";
@@ -186,36 +241,43 @@ export function UsageMenu({ client, auth, machines, onSeeAll }: Props): ReactNod
 
 	// Accounts with usage, and Antigravity sign-ins that are gone (those would otherwise vanish from the pill silently).
 	const shown = entries.filter(e => e.report !== null || e.signIn?.tone === "bad");
-	const label =
-		shown.length === 0 ? (
+	let label: ReactNode;
+	if (shown.length === 0) {
+		label = (
 			<span className="usage-item">
 				<Gauge size={15} aria-hidden="true" />
 				<span className="usage-name">Usage</span>
 			</span>
-		) : (
-			shown.map(entry => {
-				if (entry.report === null) {
-					return (
-						<span key={entry.key} className="usage-item" data-status="signed-out">
-							<Ring fraction={0} tone="signed-out" />
-							<span className="usage-name">{entry.name}</span>
+		);
+	} else {
+		const main = mainEntry(shown, provider, pin, auth);
+		const dial = dialOf(main);
+		const others = shown.filter(e => e !== main);
+		label = (
+			<span className="usage-item" data-status={dial.tone}>
+				<Ring dial={dial} size={22} r={8.5} width={3} />
+				<span className="usage-stack">
+					<span className="usage-main">
+						<span className="usage-name">{main.name}</span>
+						{main.report === null ? (
 							<span className="usage-pct usage-pct--signed-out">signed out</span>
-						</span>
-					);
-				}
-				const peak = peakLimit(entry.report);
-				const tone = usageTone(peak);
-				return (
-					<span key={entry.key} className="usage-item" data-status={tone}>
-						<Ring fraction={peak?.usedFraction} tone={tone} />
-						<span className="usage-name">{entry.name}</span>
-						{peak?.usedFraction !== undefined && (
-							<span className={`usage-pct usage-pct--${tone}`}>{percent(peak.usedFraction)}</span>
+						) : (
+							dial.fraction !== undefined && (
+								<span className={`usage-pct usage-pct--${dial.tone}`}>{percent(dial.fraction)}</span>
+							)
 						)}
 					</span>
-				);
-			})
+					{others.length > 0 && (
+						<span className="usage-minis">
+							{others.map(e => (
+								<Ring key={e.key} dial={dialOf(e)} size={8} r={3} width={1.6} />
+							))}
+						</span>
+					)}
+				</span>
+			</span>
 		);
+	}
 	const summary = shown
 		.map(e => {
 			const peak = peakLimit(e.report);

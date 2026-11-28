@@ -10,6 +10,7 @@ import {
 	type PermissionMode,
 	type SessionBackend,
 	type SessionOptions,
+	type SessionStatus,
 } from "@omp-web/protocol";
 import {
 	type ReactNode,
@@ -86,8 +87,11 @@ interface Props {
 	onShowDock(tab: "agents" | "btw"): void;
 	/** The dock's Agents or BTW tab while it is open: the element this view draws that tab into. */
 	dockSlot: { tab: "agents" | "btw"; element: HTMLElement } | null;
-	/** The dock's toolbar for the header, given the session's sub-agents: how many, how many still running. */
-	toolbar(agents: AgentCounts): ReactNode;
+	/**
+	 * The dock's toolbar for the header, given the session's sub-agents (how many, how many still running) and its
+	 * status (the usage pill shows the account its model draws on).
+	 */
+	toolbar(agents: AgentCounts, status: SessionStatus | null): ReactNode;
 	/** The machine's listed sessions (the project menu offers the directories of those outside every project). */
 	machineSessions: readonly GatewaySessionInfo[];
 	/** An explicit sidebar choice for this session; only a fresh, writable session follows it. */
@@ -452,7 +456,7 @@ export function SessionView({
 				info={info}
 				view={view}
 				readOnly={readOnly}
-				toolbar={toolbar({ total: view.subagents.size, running: countRunningAgents(view.subagents) })}
+				toolbar={toolbar({ total: view.subagents.size, running: countRunningAgents(view.subagents) }, status)}
 				onShowList={onShowList}
 				switchAction={switchAction}
 				onSwitch={onSwitch}
